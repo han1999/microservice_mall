@@ -19,26 +19,13 @@ public class TestProductDetailServiceImpl implements ITestProductDetailService {
     ItemMapper itemMapper;
 
     @Autowired
-    TestProductConverter productConverter;
+    TestProductConverter testProductConverter;
 
     @Override
-    public TestProductDetailResponse getProductDetail(TestProductDetailRequest request) {
-        System.out.println("调用了getProductDetail");
-        TestProductDetailResponse response = new TestProductDetailResponse();
-        try {
-            // 进行参数校验
-            request.requestCheck();
-            Item item = itemMapper.selectByPrimaryKey(request.getProductId());
-            TestProductDetailDto testProductDetailDto = productConverter.productDOToDTO(item);
-            response.setCode(ShoppingRetCode.SUCCESS.getCode());
-            response.setMsg(ShoppingRetCode.SUCCESS.getMessage());
-            response.setProductDetailDto(testProductDetailDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setCode(ShoppingRetCode.DB_EXCEPTION.getCode());
-            response.setMsg(ShoppingRetCode.DB_EXCEPTION.getMessage());
-        }
+    public TestProductDetailDto getProductDetail(Long productId) {
+        final Item item = itemMapper.selectByPrimaryKey(productId);
 
-        return response;
+        TestProductDetailDto testProductDetailDto = testProductConverter.productDOToDTO(item);
+        return testProductDetailDto;
     }
 }

@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 
 @Data
 public class TestProductDetailDto implements Serializable {
-    String name;
+    private String name;
 
-    BigDecimal price;
+    private BigDecimal price;
 
-    String imgUrl;
+    private String imgUrl;
 
 }

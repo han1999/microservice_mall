@@ -6,5 +6,6 @@ import com.mall.shopping.dto.TestProductDetailResponse;
 
 public interface ITestProductDetailService {
 
-    TestProductDetailResponse getProductDetail(TestProductDetailRequest request);
+    //    TestProductDetailResponse getProductDetail(TestProductDetailRequest request);
+    TestProductDetailDto getProductDetail(Long productId);
 }
