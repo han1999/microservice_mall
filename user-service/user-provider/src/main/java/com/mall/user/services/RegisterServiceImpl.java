@@ -14,6 +14,8 @@ import com.mall.user.utils.ExceptionProcessorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
@@ -38,12 +40,20 @@ public class RegisterServiceImpl implements IRegisterService {
     @Autowired
     private UserVerifyMapper userVerifyMapper;
 
+//    没办法自动注入吗？可以自动注入，可是没有@component咋做到的呢
+    //考虑到这个是springframework里面的东西，可能是有一个配置类，已经注册过了
+    @Autowired
+    private JavaMailSender mailSender;
+
     @Override
     public UserRegisterResponse register(UserRegisterRequest request) {
         UserRegisterResponse response = new UserRegisterResponse();
         try {
             request.requestCheck();
+            log.info("参数校验完毕");
+            //判断有没有重复的
             validUsernameRepeat(request);
+            log.info("检查重名完毕");
 
             Member member = new Member();
             member.setUsername(request.getUserName());
@@ -57,6 +67,7 @@ public class RegisterServiceImpl implements IRegisterService {
             //1 初始状态
             member.setState(1);
             int affectedRows = memberMapper.insert(member);
+            log.info("member表插入完毕");
             if (affectedRows != 1) {
                 response.setCode(SysRetCodeConstants.USER_REGISTER_FAILED.getCode());
                 response.setMsg(SysRetCodeConstants.USER_REGISTER_FAILED.getMessage());
@@ -67,12 +78,16 @@ public class RegisterServiceImpl implements IRegisterService {
             UserVerify userVerify = new UserVerify(null, member.getUsername(),
                     uuid, new Date(), "N", "N");
             int rows = userVerifyMapper.insert(userVerify);
+            log.info("user_verify表插入完毕");
             if (rows != 1) {
                 response.setCode(SysRetCodeConstants.USER_REGISTER_VERIFY_FAILED.getCode());
                 response.setMsg(SysRetCodeConstants.USER_REGISTER_VERIFY_FAILED.getMessage());
             }
 
             // TODO: 2022/6/16  发送邮件
+            sendEmail(uuid, request);
+            log.info("邮件发送成功");
+
             //打印日志
             log.info("注册成功,注册参数:{}", JSON.toJSON(request));
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
@@ -80,10 +95,31 @@ public class RegisterServiceImpl implements IRegisterService {
         } catch (Exception e) {
 //            response.setCode(SysRetCodeConstants.USER_REGISTER_FAILED.getCode());
 //            response.setMsg(SysRetCodeConstants.USER_REGISTER_FAILED.getMessage());
+            //这里的系统错误，其实就是数据库操作失败（例如有的键是unique, phone/username/email)
             ExceptionProcessorUtils.wrapperHandlerException(response, e);
         }
         return response;
 
+    }
+
+    /**
+     * 发送激活邮件
+     * @param uuid
+     * @param request
+     */
+    private void sendEmail(String uuid, UserRegisterRequest request) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        // TODO: 2022/6/16  不要直接写， 后续应该放到配置文件中
+        message.setSubject("网上商城用户激活");
+        message.setFrom("1295806070@qq.com");
+        message.setTo(request.getEmail());
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("http://localhost:8888/user/verify?uid=")
+                .append(uuid)
+                .append("&username=")
+                .append(request.getUserName());
+        message.setText(stringBuilder.toString());
+        mailSender.send(message);
     }
 
     /**
@@ -95,11 +131,13 @@ public class RegisterServiceImpl implements IRegisterService {
         example.createCriteria().andEqualTo("username", registerRequest.getUserName());
         List<Member> members = memberMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(members)) {
+            log.info("有重名！");
             throw new ValidateException(
                     SysRetCodeConstants.USERNAME_ALREADY_EXISTS.getCode(),
                     SysRetCodeConstants.USERNAME_ALREADY_EXISTS.getMessage()
             );
         }
+
 
     }
 }

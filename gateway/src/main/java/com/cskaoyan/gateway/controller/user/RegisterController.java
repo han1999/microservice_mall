@@ -44,6 +44,7 @@ public class RegisterController {
         String email = map.get("email");
         String captcha = map.get("captcha");
 
+        //验证码
         String kaptcha_uuid = CookieUtil.getCookieValue(request, "kaptcha_uuid");
         KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest(kaptcha_uuid, captcha);
 //        kaptchaCodeRequest.setUuid(kaptcha_uuid);
@@ -54,6 +55,7 @@ public class RegisterController {
         }
 
 //        SysRetCodeConstants 包含 所有关于 user_service的返回信息
+        //注册
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest(userName, userPwd, email);
         UserRegisterResponse userRegisterResponse = registerService.register(userRegisterRequest);
         if (userRegisterResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
