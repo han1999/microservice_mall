@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestProductController {
 
-    @Reference
+    @Reference(timeout = 3000, retries = 0, check = false)
     ITestProductDetailService iTestProductDetailService;
 
 //    @GetMapping("product")

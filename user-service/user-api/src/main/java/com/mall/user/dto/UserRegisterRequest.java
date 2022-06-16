@@ -22,4 +22,10 @@ public class UserRegisterRequest extends AbstractRequest {
             throw new ValidateException(SysRetCodeConstants.REQUEST_CHECK_FAILURE.getCode(),SysRetCodeConstants.REQUEST_CHECK_FAILURE.getMessage());
         }
     }
+
+    public UserRegisterRequest(String userName, String userPwd, String email) {
+        this.userName = userName;
+        this.userPwd = userPwd;
+        this.email = email;
+    }
 }

@@ -24,4 +24,12 @@ public class KaptchaCodeRequest extends AbstractRequest {
                     SysRetCodeConstants.REQUEST_CHECK_FAILURE.getMessage());
         }
     }
+
+    public KaptchaCodeRequest(String uuid, String code) {
+        this.uuid = uuid;
+        this.code = code;
+    }
+
+    public KaptchaCodeRequest() {
+    }
 }

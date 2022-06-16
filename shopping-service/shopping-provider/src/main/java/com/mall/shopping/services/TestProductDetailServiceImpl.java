@@ -34,7 +34,7 @@ public class TestProductDetailServiceImpl implements ITestProductDetailService {
 
     @Override
     public TestProductDetailResponse getProductDetail(TestProductDetailRequest request) {
-
+        System.out.println("TestProductDetailServiceImpl.getProductDetail");
         TestProductDetailResponse response = new TestProductDetailResponse();
         try {
             request.requestCheck();

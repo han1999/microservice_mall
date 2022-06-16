@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @create: 2020-04-14 17:00
  * @Description
  **/
-public class AddressServiceTest extends UserProviderApplicationTests {
+public class AddressServiceTest {
 
     @Autowired
     IAddressService addressService;

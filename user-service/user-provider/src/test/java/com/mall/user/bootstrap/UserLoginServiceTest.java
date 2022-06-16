@@ -1,19 +1,15 @@
 package com.mall.user.bootstrap;
 
-import com.alibaba.fastjson.JSON;
 import com.mall.user.dto.CheckAuthRequest;
-import com.mall.user.dto.CheckAuthResponse;
 import com.mall.user.dto.UserLoginRequest;
-import com.mall.user.dto.UserLoginResponse;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author: jia.xue
  * @create: 2020-04-14 21:10
  * @Description
  **/
-public class UserLoginServiceTest extends UserProviderApplicationTests {
+public class UserLoginServiceTest {
 
 
 //    @Autowired

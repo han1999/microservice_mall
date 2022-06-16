@@ -54,4 +54,5 @@ public class CaptchaController {
         }
         return new ResponseUtil<>().setErrorMsg(response.getCode());
     }
+
 }

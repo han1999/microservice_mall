@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @create: 2020-04-14 20:32
  * @Description
  **/
-public class MemberServiceTest extends UserProviderApplicationTests {
+public class MemberServiceTest {
 
     @Autowired
     private IMemberService memberService;

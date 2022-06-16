@@ -4,7 +4,7 @@ package com.mall.commons.tool.exception;
 
 import com.mall.commons.result.AbstractResponse;
 
-public class ExceptionUtil {
+public class ExceptionUtil <T>{
 
     /**
      * 将下层抛出的异常转换为resp返回码
@@ -31,4 +31,5 @@ public class ExceptionUtil {
         }
         return response;
     }
+
 }

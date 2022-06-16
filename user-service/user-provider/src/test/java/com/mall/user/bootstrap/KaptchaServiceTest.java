@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @create: 2020-04-14 20:12
  * @Description 验证码测试
  **/
-public class KaptchaServiceTest extends UserProviderApplicationTests {
+public class KaptchaServiceTest {
 
     @Autowired
     private IKaptchaService kaptchaService;
