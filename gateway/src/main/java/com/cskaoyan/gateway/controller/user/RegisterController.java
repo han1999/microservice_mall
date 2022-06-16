@@ -12,10 +12,10 @@ import com.mall.user.dto.KaptchaCodeResponse;
 import com.mall.user.dto.UserRegisterRequest;
 import com.mall.user.dto.UserRegisterResponse;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @date: 2022/6/14
  **/
 
-@Controller
+@RestController
 @RequestMapping("/user")
 public class RegisterController {
     @Reference

@@ -21,7 +21,7 @@ public class RegisterServiceTest extends UserProviderApplicationTests{
     public void testRegister() {
 //        UserRegisterRequest request = new UserRegisterRequest("hanxiao", "123456", "1043599451@qq.com");
 //        UserRegisterRequest request = new UserRegisterRequest("lisi", "789456", "2468244963@qq.com");
-        UserRegisterRequest request = new UserRegisterRequest("zhangsan", "789456", "1043599451@qq.com");
+        UserRegisterRequest request = new UserRegisterRequest("hanxiao", "123456", "1043599451@qq.com");
         UserRegisterResponse response = registerService.register(request);
         String responseJson = JSON.toJSON(response).toString();
         System.out.println("responseJson = " + responseJson);

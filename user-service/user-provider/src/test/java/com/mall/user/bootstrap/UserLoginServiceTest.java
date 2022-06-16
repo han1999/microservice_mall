@@ -1,19 +1,23 @@
 package com.mall.user.bootstrap;
 
+import com.alibaba.fastjson.JSON;
+import com.mall.user.IUserLoginService;
 import com.mall.user.dto.CheckAuthRequest;
 import com.mall.user.dto.UserLoginRequest;
+import com.mall.user.dto.UserLoginResponse;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author: jia.xue
  * @create: 2020-04-14 21:10
  * @Description
  **/
-public class UserLoginServiceTest {
+public class UserLoginServiceTest extends UserProviderApplicationTests{
 
 
-//    @Autowired
-//    private ILoginService userLoginService;
+    @Autowired
+    private IUserLoginService userLoginService;
 
     /**
      * 用户登录
@@ -25,8 +29,8 @@ public class UserLoginServiceTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setUserName("test");
         userLoginRequest.setPassword("test");
-        //UserLoginResponse loginResponse = userLoginService.login(userLoginRequest);
-        //System.out.println(JSON.toJSONString(loginResponse));
+        UserLoginResponse loginResponse = userLoginService.login(userLoginRequest);
+        System.out.println(JSON.toJSONString(loginResponse));
     }
 
     @Test

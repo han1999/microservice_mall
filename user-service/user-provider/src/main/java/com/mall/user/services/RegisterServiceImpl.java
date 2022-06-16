@@ -11,9 +11,11 @@ import com.mall.user.dal.persistence.UserVerifyMapper;
 import com.mall.user.dto.UserRegisterRequest;
 import com.mall.user.dto.UserRegisterResponse;
 import com.mall.user.utils.ExceptionProcessorUtils;
+import com.mall.user.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -64,14 +66,15 @@ public class RegisterServiceImpl implements IRegisterService {
             member.setCreated(new Date());
             member.setUpdated(new Date());
             member.setIsVerified("N");
-            //1 初始状态
             member.setState(1);
+            //向member表中插入一条记录
             int affectedRows = memberMapper.insert(member);
             log.info("member表插入完毕");
             if (affectedRows != 1) {
                 response.setCode(SysRetCodeConstants.USER_REGISTER_FAILED.getCode());
                 response.setMsg(SysRetCodeConstants.USER_REGISTER_FAILED.getMessage());
             }
+
             //向用户验证表插入一个记录
             String key = member.getUsername() + member.getPassword() + UUID.randomUUID().toString();
             String uuid = DigestUtils.md5DigestAsHex(key.getBytes());
@@ -92,10 +95,13 @@ public class RegisterServiceImpl implements IRegisterService {
             log.info("注册成功,注册参数:{}", JSON.toJSON(request));
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
             response.setMsg(SysRetCodeConstants.SUCCESS.getMessage());
+        }catch (DuplicateKeyException e){
+            ResponseUtils.setCodeAndMsg(response,SysRetCodeConstants.USER_INFOR_INVALID);
         } catch (Exception e) {
 //            response.setCode(SysRetCodeConstants.USER_REGISTER_FAILED.getCode());
 //            response.setMsg(SysRetCodeConstants.USER_REGISTER_FAILED.getMessage());
             //这里的系统错误，其实就是数据库操作失败（例如有的键是unique, phone/username/email)
+            log.error("RegisterServiceImpl.register occurs Exception :" + e);
             ExceptionProcessorUtils.wrapperHandlerException(response, e);
         }
         return response;

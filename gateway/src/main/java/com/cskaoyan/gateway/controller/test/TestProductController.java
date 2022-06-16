@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("test")
+@RequestMapping("/test")
 @RestController
 public class TestProductController {
 
@@ -32,7 +32,7 @@ public class TestProductController {
 //        return responseData;
 //    }
 
-    @GetMapping("product")
+    @GetMapping("/product")
     @Anoymous
     public ResponseData getProductDetail(Long productId) {
         TestProductDetailRequest request = new TestProductDetailRequest();

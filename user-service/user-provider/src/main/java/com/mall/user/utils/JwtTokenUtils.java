@@ -52,6 +52,7 @@ public class JwtTokenUtils {
         String info = JwtTokenUtils.builder().token(token).build().freeJwt();
         System.out.println(info);
 
+
     }
 
 

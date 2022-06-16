@@ -17,6 +17,7 @@ public class ExceptionUtil <T>{
         if (!(e instanceof Exception)) {
             return null;
         }
+        //这四个判断好像也没啥必要
         if (e instanceof ValidateException) {
             response.setCode(((ValidateException) e).getErrorCode());
             response.setMsg(e.getMessage());
