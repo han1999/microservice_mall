@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- *
+ * 实际上没有这个表
  */
 @Data
 @Table(name = "tb_panel_content_item")

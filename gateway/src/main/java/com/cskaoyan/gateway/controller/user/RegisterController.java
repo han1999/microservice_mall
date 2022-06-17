@@ -5,7 +5,7 @@ import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.CookieUtil;
 import com.mall.user.IKaptchaService;
 import com.mall.user.IRegisterService;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.KaptchaCodeRequest;
 import com.mall.user.dto.KaptchaCodeResponse;
@@ -29,15 +29,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class RegisterController {
-    @Reference
+    @Reference(timeout = 3000, retries = 0, check = false)
     private IKaptchaService kaptchaservice;
 
-    @Reference
+    @Reference(timeout = 3000, retries = 0, check = false)
     private IRegisterService registerService;
 
 
     @PostMapping("/register")
-    @Anoymous
+    @Anonymous
     public ResponseData register(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String userName = map.get("userName");
         String userPwd = map.get("userPwd");

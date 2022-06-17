@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.user.IUserLoginService;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import com.mall.user.bo.LoginUser;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.CheckAuthUserInfo;
@@ -30,7 +30,7 @@ public class LoginController {
     IUserLoginService userLoginService;
 
     @PostMapping("/login")
-    @Anoymous
+    @Anonymous
     public ResponseData login(@RequestBody LoginUser loginUser) {
         UserLoginRequest request = new UserLoginRequest();
         request.setUserName(loginUser.getUserName());
@@ -52,6 +52,6 @@ public class LoginController {
         String userInfoString = (String) request.getAttribute(TokenIntercepter.USER_INFO_KEY);
         CheckAuthUserInfo userInfo = JSON.parseObject(userInfoString, CheckAuthUserInfo.class);
         return new ResponseUtil<>().setData(userInfo);
-        // TODO: 2022/6/17  以上代码，可能要重构，改成根据uid查询数据库 
+        // TODO: 2022/6/17  以上代码，可能要重构，改成根据uid查询数据库
     }
 }

@@ -5,7 +5,7 @@ import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.CookieUtil;
 import com.mall.user.IUserLoginService;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.CheckAuthRequest;
 import com.mall.user.dto.CheckAuthResponse;
@@ -45,7 +45,7 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
         // 如果代码运行到这里，意味者本次请求，一定是一个由某个Controller中的action处理的动态请求
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        if (isAnoymous(handlerMethod)) {
+        if (isAnonymous(handlerMethod)) {
             return true;
         }
 
@@ -73,7 +73,7 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
         return false;
     }
 
-    private boolean isAnoymous(HandlerMethod handlerMethod) {
+    private boolean isAnonymous(HandlerMethod handlerMethod) {
 
         // 包含Controller处理方法的那个Controller对象
         Object bean = handlerMethod.getBean();
@@ -81,13 +81,13 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
         // 获取Controller类对应的Class对象
         Class clazz = bean.getClass();
         // 如果说Controller类上 有Anoymous
-        if (clazz.getAnnotation(Anoymous.class) != null) {
+        if (clazz.getAnnotation(Anonymous.class) != null) {
             return true;
         }
 
         // 获取action方法对应的Method对象
         Method method = handlerMethod.getMethod();
         // 如果在方法上获取到了Anoymous注解，返回true，否则返回false
-        return method.getAnnotation(Anoymous.class) != null;
+        return method.getAnnotation(Anonymous.class) != null;
     }
 }

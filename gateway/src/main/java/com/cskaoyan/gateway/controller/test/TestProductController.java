@@ -7,7 +7,7 @@ import com.mall.shopping.ITestProductDetailService;
 import com.mall.shopping.constants.ShoppingRetCode;
 import com.mall.shopping.dto.TestProductDetailRequest;
 import com.mall.shopping.dto.TestProductDetailResponse;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +33,7 @@ public class TestProductController {
 //    }
 
     @GetMapping("/product")
-    @Anoymous
+    @Anonymous
     public ResponseData getProductDetail(Long productId) {
         TestProductDetailRequest request = new TestProductDetailRequest();
         request.setProductId(productId);
