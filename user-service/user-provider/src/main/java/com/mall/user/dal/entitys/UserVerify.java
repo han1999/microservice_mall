@@ -32,13 +32,4 @@ public class UserVerify {
     @Column(name = "is_expire")
     private String isExpire;
 
-
-    public UserVerify(Long id, String username, String uuid, Date registerDate, String isVerify, String isExpire) {
-        this.id = id;
-        this.username = username;
-        this.uuid = uuid;
-        this.registerDate = registerDate;
-        this.isVerify = isVerify;
-        this.isExpire = isExpire;
-    }
 }

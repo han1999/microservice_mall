@@ -78,8 +78,15 @@ public class RegisterServiceImpl implements IRegisterService {
             //向用户验证表插入一个记录
             String key = member.getUsername() + member.getPassword() + UUID.randomUUID().toString();
             String uuid = DigestUtils.md5DigestAsHex(key.getBytes());
-            UserVerify userVerify = new UserVerify(null, member.getUsername(),
-                    uuid, new Date(), "N", "N");
+            UserVerify userVerify = new UserVerify();
+            userVerify.setUsername(member.getUsername());
+            userVerify.setUuid(uuid);
+            userVerify.setRegisterDate(new Date());
+            userVerify.setIsExpire("N");
+            userVerify.setIsVerify("N");
+            //后来感觉 还是用set方法直观，也容易后面再来看时理解
+//            UserVerify userVerify = new UserVerify(null, member.getUsername(),
+//                    uuid, new Date(), "N", "N");
             int rows = userVerifyMapper.insert(userVerify);
             log.info("user_verify表插入完毕");
             if (rows != 1) {
@@ -120,6 +127,7 @@ public class RegisterServiceImpl implements IRegisterService {
         message.setFrom("1295806070@qq.com");
         message.setTo(request.getEmail());
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("请点击下方链接，以验证注册：\n");
         stringBuilder.append("http://localhost:8888/user/verify?uid=")
                 .append(uuid)
                 .append("&username=")
