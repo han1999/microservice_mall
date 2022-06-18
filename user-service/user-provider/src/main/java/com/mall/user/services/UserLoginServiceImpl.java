@@ -1,7 +1,5 @@
 package com.mall.user.services;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.mall.user.IUserLoginService;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.converter.MemberConverter;
@@ -56,8 +54,14 @@ public class UserLoginServiceImpl implements IUserLoginService {
                     CheckAuthUserInfo userInfo = new CheckAuthUserInfo();
 //                    userInfo.setPermit(true);
                     userInfo.setUid(member.getId());
-                    userInfo.setFile(member.getFile());
-                    String message = JSON.toJSONString(userInfo);
+                    //file存到token_message里面没用，用户可能随时改头像，token不会及时更新
+                    //如果只有uid这个属性的话，那么直接写一个uid=??即可，别的方法拿到message, 也能直接解析
+                    //但是这里还是放到json中，因为方便后续的扩充（成对象)
+                    //另外别的方法拿到message， 然后放到userInfo中，还是要封装成json对象的，直接一开始就封好，省事
+//                    userInfo.setFile(member.getFile());
+//                    String message = JSON.toJSONString(member.getId());
+                    String message = "{\"uid\":" + member.getId() + "}";
+                    log.info("message:{}", message);
 //                    String message = TokenConstants.PERMITTED.getTokenMessage()+member.getId()+":"+member.getFile();
                     String token = JwtTokenUtils.builder().msg(message).build().creatJwtToken();
                     response.setToken(token);
@@ -83,12 +87,14 @@ public class UserLoginServiceImpl implements IUserLoginService {
             String message = JwtTokenUtils.builder().token(request.getToken()).build().freeJwt();
             //转换不成功的话，会是null还是报错
 //            CheckAuthUserInfo userInfo = JSON.parseObject(message, CheckAuthUserInfo.class);
-            JSONObject jsonObject = JSON.parseObject(message);
+//            JSONObject jsonObject = JSON.parseObject(message);
 //            Boolean permit = jsonObject.getObject("permit", Boolean.class);
             //如果CheckAuthUserInfo里面有一个permit的话，login get的result不好传数据
-            Long uid = jsonObject.getObject("uid", Long.class);
+//            Long uid = jsonObject.getObject("uid", Long.class);
 
-            if (uid>0) {
+            //uid>0 检查太严格了， 没有必要解析Json，浪费资源
+            if (/*uid>0*/ message.contains("uid")) {
+                //message 原封不动地 放入 userInfo 中
                 response.setUserInfo(message);
                 return ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.SUCCESS);
             }
@@ -102,6 +108,25 @@ public class UserLoginServiceImpl implements IUserLoginService {
             ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.TOKEN_VALID_FAILED);
         } catch (Exception e) {
             log.error("UserLoginServiceImpl.validToken occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
+    }
+
+    @Override
+    public CheckLoginResponse checkLogin(CheckLoginRequest request) {
+        CheckLoginResponse response = new CheckLoginResponse();
+        try {
+            request.requestCheck();
+            Member member = memberMapper.selectByPrimaryKey(request.getUid());
+            if (member != null) {
+                CheckLoginMemberDto checkLoginMemberDto = memberConverter.member2CheckLoginMemberDto(member);
+                response.setCheckLoginMemberDto(checkLoginMemberDto);
+                return ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.SUCCESS);
+            }
+            return ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.DB_EXCEPTION);
+        } catch (Exception e) {
+            log.error("UserLoginServiceImpl.checkLogin occurs Exception :" + e);
             ExceptionProcessorUtils.wrapperHandlerException(response, e);
         }
         return response;

@@ -60,7 +60,7 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
         //从token中获取用户信息
         CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
-        checkAuthRequest.setToken(token);
+        checkAuthRequest.setToken(token);//把cookie中token封装到checkAuthRequest中
         CheckAuthResponse checkAuthResponse= userLoginService.validToken(checkAuthRequest);
         if(checkAuthResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())){
             //request域中加了一些信息

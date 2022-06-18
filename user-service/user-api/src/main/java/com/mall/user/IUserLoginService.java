@@ -1,9 +1,6 @@
 package com.mall.user;
 
-import com.mall.user.dto.CheckAuthRequest;
-import com.mall.user.dto.CheckAuthResponse;
-import com.mall.user.dto.UserLoginRequest;
-import com.mall.user.dto.UserLoginResponse;
+import com.mall.user.dto.*;
 
 /**
  * @description:
@@ -21,9 +18,11 @@ public interface IUserLoginService {
     UserLoginResponse login(UserLoginRequest request);
 
     /**
-     * 验证token， 成功则向response中写入userInfo
+     * 验证token， 成功则向response中写入userInfo(Json格式)
      * @param checkAuthRequest
      * @return
      */
     CheckAuthResponse validToken(CheckAuthRequest checkAuthRequest);
+
+    CheckLoginResponse checkLogin(CheckLoginRequest request);
 }

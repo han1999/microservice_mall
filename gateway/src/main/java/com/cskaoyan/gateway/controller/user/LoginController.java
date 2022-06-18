@@ -1,6 +1,7 @@
 package com.cskaoyan.gateway.controller.user;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.CookieUtil;
@@ -62,6 +63,7 @@ public class LoginController {
         if (response.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
             /**
              * 成功登录， 给一个access_token到cookie里面， 我猜是这个逻辑
+             * 确实是这个逻辑！
              */
             Cookie cookie = CookieUtil.genCookie(TokenIntercepter.ACCESS_TOKEN, response.getToken(), "/", 3600 * 24);
             cookie.setHttpOnly(true);
@@ -72,15 +74,26 @@ public class LoginController {
     }
 
     /**
-     * @param request
+     * @param httpServletRequest
      * @return
      */
     @GetMapping("/login")
-    public ResponseData validateLoginToken(HttpServletRequest request) {
+    public ResponseData checkLogin(HttpServletRequest httpServletRequest) {
 //        CheckAuthUserInfo userInfo = (CheckAuthUserInfo) request.getAttribute(TokenIntercepter.USER_INFO_KEY);
-        String userInfoString = (String) request.getAttribute(TokenIntercepter.USER_INFO_KEY);
+/*        String userInfoString = (String) request.getAttribute(TokenIntercepter.USER_INFO_KEY);
         CheckAuthUserInfo userInfo = JSON.parseObject(userInfoString, CheckAuthUserInfo.class);
-        return new ResponseUtil<>().setData(userInfo);
-        // TODO: 2022/6/17  以上代码，可能要重构，改成根据uid查询数据库
+        return new ResponseUtil<>().setData(userInfo);*/
+        // TODO: 2022/6/17  以上代码，可能要重构，改成根据uid查询数据库 Complete
+        String userInfo = (String) httpServletRequest.getAttribute(TokenIntercepter.USER_INFO_KEY);
+        JSONObject jsonObject = JSON.parseObject(userInfo);
+        Long uid = jsonObject.getObject("uid", Long.class);
+
+        CheckLoginRequest request = new CheckLoginRequest();
+        request.setUid(uid);
+        CheckLoginResponse response = userLoginService.checkLogin(request);
+        if (SysRetCodeConstants.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response.getCheckLoginMemberDto());
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 }
