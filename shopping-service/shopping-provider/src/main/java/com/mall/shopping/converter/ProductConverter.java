@@ -24,6 +24,12 @@ public interface ProductConverter {
     })
     ProductDto item2Dto(Item item);
 
+    /**
+     *  Item.images是String[]类型， ProductDetailDto.productImageSmall是List<String>
+     *  String[]-->List<String>是可以成功的
+     * @param item
+     * @return
+     */
     @Mappings({
             @Mapping(source = "id", target = "productId"),
             @Mapping(source = "price", target = "salePrice"),
