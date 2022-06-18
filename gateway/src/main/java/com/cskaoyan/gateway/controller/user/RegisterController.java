@@ -45,11 +45,7 @@ public class RegisterController {
         String captcha = map.get("captcha");
 
         //验证码
-        String kaptcha_uuid = CookieUtil.getCookieValue(request, "kaptcha_uuid");
-        KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest(kaptcha_uuid, captcha);
-//        kaptchaCodeRequest.setUuid(kaptcha_uuid);
-//        kaptchaCodeRequest.setCode(captcha);
-        KaptchaCodeResponse kaptchaCodeResponse = kaptchaservice.validateKaptchaCode(kaptchaCodeRequest);
+        KaptchaCodeResponse kaptchaCodeResponse = getKaptchaCodeResponse(request, captcha);
         if (!kaptchaCodeResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
             return new ResponseUtil<>().setErrorMsg(kaptchaCodeResponse.getMsg());
         }
@@ -63,5 +59,19 @@ public class RegisterController {
         }
         return new ResponseUtil<>().setErrorMsg(userRegisterResponse.getMsg());
 
+    }
+
+    /**
+     * 验证码检查
+     * @param request
+     * @param captcha
+     * @return
+     */
+    private KaptchaCodeResponse getKaptchaCodeResponse(HttpServletRequest request, String captcha) {
+        String kaptcha_uuid = CookieUtil.getCookieValue(request, "kaptcha_uuid");
+        KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest();
+        kaptchaCodeRequest.setUuid(kaptcha_uuid);
+        kaptchaCodeRequest.setCode(captcha);
+        return kaptchaservice.validateKaptchaCode(kaptchaCodeRequest);
     }
 }

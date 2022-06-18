@@ -11,5 +11,6 @@ import lombok.Data;
 public class LoginUser {
     private String userName;
     private String userPwd;
+    //captcha不属于用户的属性
     private String captcha;
 }
