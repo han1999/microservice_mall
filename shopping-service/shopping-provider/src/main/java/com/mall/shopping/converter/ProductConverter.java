@@ -10,19 +10,31 @@ import org.mapstruct.Mappings;
 import java.util.List;
 
 /**
- *  cskaoyan
+ * cskaoyan
  */
 @Mapper(componentModel = "spring")
 public interface ProductConverter {
 
     @Mappings({
-            @Mapping(source = "id",target = "productId"),
-            @Mapping(source = "title",target = "productName"),
-            @Mapping(source = "price",target = "salePrice"),
-            @Mapping(source = "sellPoint",target = "subTitle"),
-            @Mapping(source = "imageBig",target = "picUrl")
+            @Mapping(source = "id", target = "productId"),
+            @Mapping(source = "title", target = "productName"),
+            @Mapping(source = "price", target = "salePrice"),
+            @Mapping(source = "sellPoint", target = "subTitle"),
+            @Mapping(source = "imageBig", target = "picUrl")
     })
     ProductDto item2Dto(Item item);
 
+    @Mappings({
+            @Mapping(source = "id", target = "productId"),
+            @Mapping(source = "price", target = "salePrice"),
+            @Mapping(source = "title", target = "productName"),
+            @Mapping(source = "sellPoint", target = "subTitle"),
+            @Mapping(source = "imageBig", target = "productImageBig"),
+            @Mapping(source = "images", target = "productImageSmall")
+    })
+    ProductDetailDto item2ProductDetailDto(Item item);
+
     List<ProductDto> items2Dto(List<Item> items);
+
+
 }

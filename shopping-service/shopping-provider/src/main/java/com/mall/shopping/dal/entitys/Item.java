@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 
 @Table(name = "tb_item")
@@ -35,6 +36,9 @@ public class Item implements Serializable {
 
     @Transient
     private String imageBig;
+
+    @Transient
+    private String[] images;
 
     private static final long serialVersionUID = 1L;
 
@@ -134,8 +138,16 @@ public class Item implements Serializable {
         return null;
     }
 
+    public void setImages() {
+        this.images = this.getImages();
+    }
+
     public void setImageBig(String imageBig) {
         this.imageBig = imageBig;
+    }
+
+    public void setImageBig() {
+        this.imageBig = this.getImageBig();
     }
 
     public String getImageBig(){
@@ -148,23 +160,42 @@ public class Item implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", title=").append(title);
-        sb.append(", sellPoint=").append(sellPoint);
-        sb.append(", price=").append(price);
-        sb.append(", num=").append(num);
-        sb.append(", limitNum=").append(limitNum);
-        sb.append(", image=").append(image);
-        sb.append(", cid=").append(cid);
-        sb.append(", status=").append(status);
-        sb.append(", created=").append(created);
-        sb.append(", updated=").append(updated);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "Item{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", sellPoint='" + sellPoint + '\'' +
+                ", price=" + price +
+                ", num=" + num +
+                ", limitNum=" + limitNum +
+                ", image='" + image + '\'' +
+                ", cid=" + cid +
+                ", status=" + status +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", imageBig='" + imageBig + '\'' +
+                ", images=" + Arrays.toString(images) +
+                '}';
     }
+
+    //    @Override
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(getClass().getSimpleName());
+//        sb.append(" [");
+//        sb.append("Hash = ").append(hashCode());
+//        sb.append(", id=").append(id);
+//        sb.append(", title=").append(title);
+//        sb.append(", sellPoint=").append(sellPoint);
+//        sb.append(", price=").append(price);
+//        sb.append(", num=").append(num);
+//        sb.append(", limitNum=").append(limitNum);
+//        sb.append(", image=").append(image);
+//        sb.append(", cid=").append(cid);
+//        sb.append(", status=").append(status);
+//        sb.append(", created=").append(created);
+//        sb.append(", updated=").append(updated);
+//        sb.append(", serialVersionUID=").append(serialVersionUID);
+//        sb.append("]");
+//        return sb.toString();
+//    }
 }
