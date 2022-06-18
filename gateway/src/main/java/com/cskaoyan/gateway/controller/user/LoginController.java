@@ -44,11 +44,7 @@ public class LoginController {
         /**
          * 验证码校验
          */
-        String kaptcha_uuid = CookieUtil.getCookieValue(httpServletRequest, "kaptcha_uuid");
-        KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest();
-        kaptchaCodeRequest.setUuid(kaptcha_uuid);
-        kaptchaCodeRequest.setCode(loginUser.getCaptcha());
-        KaptchaCodeResponse kaptchaCodeResponse = kaptchaService.validateKaptchaCode(kaptchaCodeRequest);
+        KaptchaCodeResponse kaptchaCodeResponse = getKaptchaCodeResponse(loginUser, httpServletRequest);
         if (!SysRetCodeConstants.SUCCESS.getCode().equals(kaptchaCodeResponse.getCode())) {
             return new ResponseUtil<>().setErrorMsg(kaptchaCodeResponse.getMsg());
         }
@@ -56,21 +52,36 @@ public class LoginController {
         /**
          * 登录
          */
-        UserLoginRequest request = new UserLoginRequest();
-        request.setUserName(loginUser.getUserName());
-        request.setPassword(loginUser.getUserPwd());
-        UserLoginResponse response = userLoginService.login(request);
+        UserLoginResponse response = getUserLoginResponse(loginUser);
         if (response.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
             /**
              * 成功登录， 给一个access_token到cookie里面， 我猜是这个逻辑
              * 确实是这个逻辑！
+             * maxAge>0 按照秒来计时
+             * maxAge==0 删除 cookie （没有其他删除客户端保存的cookie的方法)
+             * maxAge<0 浏览器关闭后，删除cookie，cookie不持久化保存，只存在于浏览器内存中
              */
-            Cookie cookie = CookieUtil.genCookie(TokenIntercepter.ACCESS_TOKEN, response.getToken(), "/", 3600 * 24);
+            Cookie cookie = CookieUtil.genCookie(TokenIntercepter.ACCESS_TOKEN, response.getToken(), "/", -1);
             cookie.setHttpOnly(true);
             httpServletResponse.addCookie(cookie);
             return new ResponseUtil<>().setData(response);
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+    private UserLoginResponse getUserLoginResponse(@RequestBody LoginUser loginUser) {
+        UserLoginRequest request = new UserLoginRequest();
+        request.setUserName(loginUser.getUserName());
+        request.setPassword(loginUser.getUserPwd());
+        return userLoginService.login(request);
+    }
+
+    private KaptchaCodeResponse getKaptchaCodeResponse(@RequestBody LoginUser loginUser, HttpServletRequest httpServletRequest) {
+        String kaptcha_uuid = CookieUtil.getCookieValue(httpServletRequest, "kaptcha_uuid");
+        KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest();
+        kaptchaCodeRequest.setUuid(kaptcha_uuid);
+        kaptchaCodeRequest.setCode(loginUser.getCaptcha());
+        return kaptchaService.validateKaptchaCode(kaptchaCodeRequest);
     }
 
     /**

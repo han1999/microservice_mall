@@ -61,7 +61,8 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
         //从token中获取用户信息
         CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
         checkAuthRequest.setToken(token);//把cookie中token封装到checkAuthRequest中
-        CheckAuthResponse checkAuthResponse= userLoginService.validToken(checkAuthRequest);
+        //CheckAuthResponse就在这里用过一次， 起一个中转作用, 主要为了查看，userInfo是否传入成功
+        CheckAuthResponse checkAuthResponse= userLoginService.freeAndValidToken(checkAuthRequest);
         if(checkAuthResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())){
             //request域中加了一些信息
             request.setAttribute(USER_INFO_KEY,checkAuthResponse.getUserInfo()); //保存token解析后的信息后续要用

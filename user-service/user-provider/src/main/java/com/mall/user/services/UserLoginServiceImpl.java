@@ -80,7 +80,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
     }
 
     @Override
-    public CheckAuthResponse validToken(CheckAuthRequest request) {
+    public CheckAuthResponse freeAndValidToken(CheckAuthRequest request) {
         CheckAuthResponse response = new CheckAuthResponse();
         try {
             request.requestCheck();
@@ -107,7 +107,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
 //            }
             ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.TOKEN_VALID_FAILED);
         } catch (Exception e) {
-            log.error("UserLoginServiceImpl.validToken occurs Exception :" + e);
+            log.error("UserLoginServiceImpl.freeAndValidToken occurs Exception :" + e);
             ExceptionProcessorUtils.wrapperHandlerException(response, e);
         }
         return response;

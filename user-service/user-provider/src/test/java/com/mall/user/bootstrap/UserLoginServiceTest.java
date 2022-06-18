@@ -39,7 +39,7 @@ public class UserLoginServiceTest extends UserProviderApplicationTests{
 
         CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
         checkAuthRequest.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3bGd6cyIsImV4cCI6MTU4Njk1NzQ3NSwidXNlciI6IjRCNUM1RkY5OTQ2RjZCQ0M3NkNGODI2RTlCN0UwQjVBQ0Y1RkE0QkNFNzNCRTQ2MkI0QjQ4OTUzNkZEMTZBNjVCNkMwMDY0ODA1N0JDMjlFRDBFMjRCQkVDMDg5MzZGRkIwRkRFMDI2OUJFQzNDMjZGMzdGNkQ3NjY2RjRBN0RFNDNFNUY2RURBNjk3NDg3RTFBNzk4NDdDNjE3Nzg3MEVGODAxRTRBNEQ2RUREMTdCQkE4ODIwODI4NTM3MjJBQTE2RDRDOTE5REM0MzgzMkMwNDQ0M0I1OTlBRENENjNCIn0.7eG8d0LDtB9D_GHAMbt0V9dry0PZyhsqOnq2LH-J5dY");
-        CheckAuthResponse checkAuthResponse = userLoginService.validToken(checkAuthRequest);
+        CheckAuthResponse checkAuthResponse = userLoginService.freeAndValidToken(checkAuthRequest);
         System.out.println(JSON.toJSONString(checkAuthResponse));
     }
 }
