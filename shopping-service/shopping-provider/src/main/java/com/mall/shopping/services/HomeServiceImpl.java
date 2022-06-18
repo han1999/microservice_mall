@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,23 +40,26 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public HomePageResponse homepage() {
         HomePageResponse response = new HomePageResponse();
-        HashSet<PanelDto> panelDtos = new HashSet<>();
+//        HashSet<PanelDto> panelDtos = new HashSet<>();
+        ArrayList<PanelDto> panelDtos = new ArrayList<>();
         try {
             Example example = new Example(Panel.class);
-            //status=1 一级板块
+            //status=1 应该表示某种状态
             example.createCriteria().andEqualTo("status", 1);
             //即便panel有序，那么传过去的set，也是无序的呀，所以这个语句应该没用
             //实际上测试后发现确实没用，但是还是写上去吧
+            // 改set为list， 然后排序就有用了，网页测试确实如此
             example.setOrderByClause("sort_order");
             List<Panel> panelList = panelMapper.selectByExample(example);
             for (Panel panel : panelList) {
                 List<PanelContentItem> panelContentItems = panelContentMapper.selectPanelContentAndProductWithPanelId(panel.getId());
-                Integer limitNum = panel.getLimitNum();
-                if (panelContentItems != null && panelContentItems.size() < limitNum) {
-                    limitNum = panelContentItems.size();
+                Integer itemsNum = panel.getLimitNum();
+                if (panelContentItems != null && panelContentItems.size() < itemsNum) {
+                    itemsNum = panelContentItems.size();
                 }
+                //itemsNum就是选择panelContentItems.size和panel.getLimitNum中较小的那个
                 //这个limitNum业务确实没想到， 如果返回数据过多会怎么样呢
-                panelContentItems = panelContentItems.subList(0, limitNum);
+                panelContentItems = panelContentItems.subList(0, itemsNum);
                 // panelContentItem已经满足json的要求了
                 // 并不需要 panelContentItemDto dto中SubTitle首字母大写反而是错的
                 panel.setPanelContentItems(panelContentItems);

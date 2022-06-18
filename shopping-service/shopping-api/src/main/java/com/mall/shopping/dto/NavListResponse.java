@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- *  cskaoyan
+ *  cskaoyan 没有用到，等价于 NavigationResponse
  */
 @Data
 public class NavListResponse extends AbstractResponse {

@@ -2,7 +2,6 @@ package com.mall.shopping;
 
 import com.mall.shopping.dto.AllProductCateRequest;
 import com.mall.shopping.dto.AllProductCateResponse;
-import com.mall.shopping.dto.AllProductCateRequest;
 
 /**
  */
@@ -13,4 +12,6 @@ public interface IProductCateService {
      * @return
      */
     AllProductCateResponse getAllProductCate(AllProductCateRequest request);
+
+    AllProductCateResponse getAllProductCate();
 }

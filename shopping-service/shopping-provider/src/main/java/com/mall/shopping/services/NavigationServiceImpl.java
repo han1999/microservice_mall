@@ -40,6 +40,7 @@ public class NavigationServiceImpl implements INavigationService {
         try {
             Example example = new Example(PanelContent.class);
             example.createCriteria().andEqualTo("panelId", 0);
+            //页面最后确实是按照Id顺序显示的
             example.setOrderByClause("id");
             List<PanelContent> panelContentList = panelContentMapper.selectByExample(example);
             if (!CollectionUtils.isEmpty(panelContentList)) {
