@@ -1,5 +1,8 @@
 package com.mall.shopping.services;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mall.shopping.IProductService;
 import com.mall.shopping.constants.ShoppingRetCode;
 import com.mall.shopping.converter.ProductConverter;
@@ -14,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
 
 /**
  * @description:
@@ -45,9 +52,10 @@ public class ProductServiceImpl implements IProductService {
             }
             /**
              * 这样感觉不太好，如果忘记写item.setImageBig的话， 这个属性就没有了
+             * 并不是，因为mapstruct调用的是get方法，所以直接在get里面写逻辑就可以了
              */
-            item.setImageBig();
-            item.setImages();
+      /*      item.setImageBig();
+            item.setImages();*/
             ProductDetailDto productDetailDto = productConverter.item2ProductDetailDto(item);
             ItemDesc itemDesc = itemDescMapper.selectByPrimaryKey(request.getId());
             //detail有可能就是null
@@ -65,7 +73,37 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public AllProductResponse getAllProduct(AllProductRequest request) {
-        return null;
+        AllProductResponse response = new AllProductResponse();
+        try {
+            request.requestCheck();
+            PageHelper.startPage(request.getPage(), request.getSize());
+            Example example = new Example(Item.class);
+            example.createCriteria().andGreaterThan("price", request.getPriceGt())
+                    .andLessThan("price", request.getPriceLte());
+            String sort = request.getSort();
+            if ("1".equals(sort)) {
+                example.setOrderByClause("price");
+            } else if ("-1".equals(sort)) {
+                example.setOrderByClause("price desc");
+            }
+            List<Item> itemList = itemMapper.selectByExample(example);
+            if (itemList instanceof Page) {
+                log.debug("itemList's type is Page");
+            }
+            if (!CollectionUtils.isEmpty(itemList)) {
+                List<ProductDto> productDtoList = productConverter.items2Dto(itemList);
+                PageInfo<Item> itemPageInfo = new PageInfo<>(itemList);
+//                response.setProductDtoList(productDtoList);
+                response.setData(productDtoList);
+                response.setTotal(itemPageInfo.getTotal());
+                return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+            }
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.DB_EXCEPTION);
+        } catch (Exception e) {
+            log.error("ProductServiceImpl.getAllProduct occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
 
     @Override

@@ -18,6 +18,9 @@ public class Item implements Serializable {
 
     private String sellPoint;
 
+    /**
+     * decimal(10,2) --> BigDecimal
+     */
     private BigDecimal price;
 
     private Integer num;
@@ -26,6 +29,9 @@ public class Item implements Serializable {
 
     private String image;
 
+    /**
+     * BIGINT --> Long
+     */
     private Long cid;
 
     private Integer status;
@@ -138,17 +144,10 @@ public class Item implements Serializable {
         return null;
     }
 
-    public void setImages() {
-        this.images = this.getImages();
-    }
-
     public void setImageBig(String imageBig) {
         this.imageBig = imageBig;
     }
 
-    public void setImageBig() {
-        this.imageBig = this.getImageBig();
-    }
 
     public String getImageBig(){
         if (image != null && !"".equals(image)) {

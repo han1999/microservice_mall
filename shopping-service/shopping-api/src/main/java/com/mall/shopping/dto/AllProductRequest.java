@@ -19,6 +19,9 @@ public class AllProductRequest extends AbstractRequest {
     @Override
     public void requestCheck() {
         if(page<=0){
+            /**
+             * 这里不抛异常，先让页面正常显示出来
+             */
             setPage(1);
         }
     }

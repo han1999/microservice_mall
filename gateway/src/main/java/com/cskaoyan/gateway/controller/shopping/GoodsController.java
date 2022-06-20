@@ -26,9 +26,8 @@ public class GoodsController {
 
     @GetMapping("/goods")
     @Anonymous
-    public ResponseData goods() {
-        AllProductRequest request = new AllProductRequest();
-        request.set
+    public ResponseData goods(AllProductRequest request) {
+//        request.set
         AllProductResponse response = productService.getAllProduct(request);
         if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
             /**

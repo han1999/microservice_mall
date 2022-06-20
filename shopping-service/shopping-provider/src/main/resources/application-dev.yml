@@ -48,3 +48,6 @@ dubbo:
   scan:
     base-packages: com.mall.shopping.services
 
+logging:
+  level:
+    root: debug
