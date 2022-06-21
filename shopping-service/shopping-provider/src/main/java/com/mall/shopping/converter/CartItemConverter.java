@@ -3,16 +3,18 @@ package com.mall.shopping.converter;
 
 import com.mall.shopping.dal.entitys.Item;
 import com.mall.shopping.dto.CartProductDto;
-import com.mall.shopping.dto.CartProductDto;
 
 /**
  * Created by cskaoyan on 2019/7/23.
  */
-
 public class CartItemConverter {
 
 
-
+    /**
+     * 这种方法粗暴而有效，如果在DO中就用transient也可以，简单一点
+     * @param item
+     * @return
+     */
     public static CartProductDto item2Dto(Item item){
         CartProductDto cartProduct =new CartProductDto();
         cartProduct.setProductId(item.getId());
