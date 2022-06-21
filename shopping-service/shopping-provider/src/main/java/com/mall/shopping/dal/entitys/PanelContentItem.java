@@ -10,6 +10,7 @@ import java.util.Date;
 
 /**
  * 实际上没有这个表
+ * 这是两个表连接而成
  */
 @Data
 @Table(name = "tb_panel_content_item")

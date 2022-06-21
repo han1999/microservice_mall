@@ -65,7 +65,7 @@ public class HomeServiceImpl implements IHomeService {
                 panel.setPanelContentItems(panelContentItems);
 
                 //Panel需要转成PanelDto, 因为Panel中有created和updated， json里面没有
-                PanelDto panelDto = contentConverter.panen2Dto(panel);
+                PanelDto panelDto = contentConverter.panel2Dto(panel);
                 panelDtos.add(panelDto);
             }
             //定义得好混乱！！！！

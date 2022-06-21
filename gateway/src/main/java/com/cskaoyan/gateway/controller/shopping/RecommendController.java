@@ -4,8 +4,7 @@ import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.shopping.IProductService;
 import com.mall.shopping.constants.ShoppingRetCode;
-import com.mall.shopping.dto.AllProductRequest;
-import com.mall.shopping.dto.AllProductResponse;
+import com.mall.shopping.dto.RecommendResponse;
 import com.mall.user.annotation.Anonymous;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,28 +14,25 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @description:
  * @author: Han Xiao
- * @date: 2022/6/18
+ * @date: 2022/6/21
  **/
 @RestController
 @RequestMapping("/shopping")
-public class GoodsController {
+public class RecommendController {
+
     @Reference(timeout = 3000, retries = 0, check = false)
     IProductService productService;
 
 
-    @GetMapping("/goods")
+    @GetMapping("/recommend")
     @Anonymous
-    public ResponseData goods(AllProductRequest request) {
-//        request.set
-        AllProductResponse response = productService.getAllProduct(request);
+    public ResponseData recommend() {
+        RecommendResponse response = productService.getRecommendGoods();
         if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
-            /**
-             * response作为result 会多出来code和msg这两个无用信息
-             * 虽然无用，不过前端能解析到有用信息就行了
-             */
-            return new ResponseUtil<>().setData(response);
+            return new ResponseUtil<>().setData(response.getPanelDtoList());
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
-}
+    }
+
 
 }
