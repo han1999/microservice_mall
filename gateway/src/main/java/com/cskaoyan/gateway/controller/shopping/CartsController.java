@@ -5,10 +5,7 @@ import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.RequestUtils;
 import com.mall.shopping.ICartService;
 import com.mall.shopping.constants.ShoppingRetCode;
-import com.mall.shopping.dto.AddCartRequest;
-import com.mall.shopping.dto.AddCartResponse;
-import com.mall.shopping.dto.CartListByIdRequest;
-import com.mall.shopping.dto.CartListByIdResponse;
+import com.mall.shopping.dto.*;
 import com.mall.user.intercepter.TokenIntercepter;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +57,21 @@ public class CartsController {
             return new ResponseUtil<>().setData(response.getMsg());
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
 
+    /**
+     * 第一次使用了 JsonProperty 注解
+     *
+     * @param request
+     * @return
+     */
+    @PutMapping("/carts")
+    public ResponseData updateCarts(@RequestBody UpdateCartNumRequest request) {
+        UpdateCartNumResponse response = cartService.updateCartNum(request);
+        if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData("成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 
 }

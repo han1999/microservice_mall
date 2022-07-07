@@ -99,7 +99,20 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public UpdateCartNumResponse updateCartNum(UpdateCartNumRequest request) {
-        return null;
+        UpdateCartNumResponse response = new UpdateCartNumResponse();
+        try {
+            request.requestCheck();
+            RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
+            Long itemId = request.getItemId();
+            CartProductDto cartProductDto = userCartMap.get(itemId);
+            cartProductDto.setProductNum(request.getNum().longValue());
+            userCartMap.put(itemId, cartProductDto);
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+        } catch (Exception e) {
+            log.error("CartServiceImpl.updateCartNum occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
 
     @Override
