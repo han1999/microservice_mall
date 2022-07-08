@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @description:
@@ -148,7 +150,25 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public DeleteCheckedItemResposne deleteCheckedItem(DeleteCheckedItemRequest request) {
-        return null;
+        DeleteCheckedItemResposne resposne = new DeleteCheckedItemResposne();
+        try {
+            request.requestCheck();
+            RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
+            Set<Long> keySet = userCartMap.keySet();
+            Iterator<Long> iterator = keySet.iterator();
+            while (iterator.hasNext()) {
+                Long key = iterator.next();
+                CartProductDto cartProductDto = userCartMap.get(key);
+                if ("true".equals(cartProductDto.getChecked())) {
+                    userCartMap.remove(key);
+                }
+            }
+            return ResponseUtils.setCodeAndMsg(resposne, ShoppingRetCode.SUCCESS);
+        } catch (Exception e) {
+            log.error("CartServiceImpl.deleteCheckedItem occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(resposne, e);
+        }
+        return resposne;
     }
 
     @Override

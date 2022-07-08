@@ -69,7 +69,7 @@ public class CartsController {
     public ResponseData updateCarts(@RequestBody UpdateCartNumRequest request) {
         UpdateCartNumResponse response = cartService.updateCartNum(request);
         if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
-            return new ResponseUtil<>().setData("成功");
+            return new ResponseUtil<>().setData(response.getMsg());
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
@@ -81,13 +81,21 @@ public class CartsController {
         request.setItemId(pid);
         DeleteCartItemResponse response = cartService.deleteCartItem(request);
         if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
-            return new ResponseUtil<>().setData("成功");
+            return new ResponseUtil<>().setData(response.getMsg());
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 
     @DeleteMapping("/items/{uid}")
-    public ResponseData
+    public ResponseData deleteCheckedItem(@PathVariable("uid") Long uid) {
+        DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
+        request.setUserId(uid);
+        DeleteCheckedItemResposne resposne = cartService.deleteCheckedItem(request);
+        if (ShoppingRetCode.SUCCESS.getCode().equals(resposne.getCode())) {
+            return new ResponseUtil<>().setData(resposne.getMsg());
+        }
+        return new ResponseUtil<>().setErrorMsg(resposne.getMsg());
+    }
 
 
 
