@@ -1,5 +1,6 @@
 package com.mall.shopping.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mall.commons.result.AbstractRequest;
 import com.mall.commons.tool.exception.ValidateException;
 import com.mall.shopping.constants.ShoppingRetCode;
@@ -11,9 +12,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Data
 public class UpdateCartNumRequest extends AbstractRequest{
+
     private Long userId;
+
+    @JsonProperty("productId")
     private Long itemId;
+
+    @JsonProperty("productNum")
     private Integer num;
+
     private String checked;
 
     @Override

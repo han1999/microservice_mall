@@ -8,14 +8,16 @@ import lombok.Data;
 @Data
 public class TestProductDetailRequest extends AbstractRequest {
 
-    Long productId;
+    private Long productId;
 
     @Override
     public void requestCheck() {
         if (productId == null || productId < 0) {
             throw new ValidateException(
                     ShoppingRetCode.PARAMETER_VALIDATION_FAILED.getCode(),
-                    ShoppingRetCode.PARAMETER_VALIDATION_FAILED.getMessage());
+                    ShoppingRetCode.PARAMETER_VALIDATION_FAILED.getMessage()
+            );
         }
+
     }
 }

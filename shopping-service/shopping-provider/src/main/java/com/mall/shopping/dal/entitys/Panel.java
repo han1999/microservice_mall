@@ -35,6 +35,7 @@ public class Panel implements Serializable {
 
     private Date updated;
 
+    @Transient
     private List<PanelContentItem> panelContentItems;
 
     @Transient

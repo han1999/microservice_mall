@@ -1,6 +1,6 @@
 package com.cskaoyan.gateway.controller.test;
 
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestInterceptController {
 
     @GetMapping("/intercept")
-    @Anoymous
+    @Anonymous
     public String testIntercept() {
         return "hello, token interceptor";
     }

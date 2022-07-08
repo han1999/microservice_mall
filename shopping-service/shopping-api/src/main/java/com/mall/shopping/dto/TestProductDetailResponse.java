@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class TestProductDetailResponse extends AbstractResponse {
-    TestProductDetailDto productDetailDto;
+    private TestProductDetailDto testProductDetailDto;
 }

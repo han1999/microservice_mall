@@ -4,10 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.CookieUtil;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.IUserLoginService;
+import com.mall.user.annotation.Anonymous;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.CheckAuthRequest;
-//import com.mall.user.dto.CheckAuthResponse;
+import com.mall.user.dto.CheckAuthResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.method.HandlerMethod;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
+//import com.mall.user.dto.CheckAuthResponse;
+
 /**
  * 用来实现token拦截认证
  * <p>
@@ -24,8 +27,8 @@ import java.lang.reflect.Method;
  */
 public class TokenIntercepter extends HandlerInterceptorAdapter {
 
-//    @Reference(timeout = 3000,check = false)
-//    ILoginService iUserLoginService;
+    @Reference(timeout = 3000,check = false, retries = 0)
+    IUserLoginService userLoginService;
 
     public static String ACCESS_TOKEN = "access_token";
 
@@ -42,7 +45,7 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
         // 如果代码运行到这里，意味者本次请求，一定是一个由某个Controller中的action处理的动态请求
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        if (isAnoymous(handlerMethod)) {
+        if (isAnonymous(handlerMethod)) {
             return true;
         }
 
@@ -57,19 +60,21 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
         //从token中获取用户信息
         CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
-        checkAuthRequest.setToken(token);
-//        CheckAuthResponse checkAuthResponse=iUserLoginService.validToken(checkAuthRequest);
-//        if(checkAuthResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())){
-//            request.setAttribute(USER_INFO_KEY,checkAuthResponse.getUserinfo()); //保存token解析后的信息后续要用
-//            return super.preHandle(request, response, handler);
-//        }
-//        ResponseData responseData=new ResponseUtil().setErrorMsg(checkAuthResponse.getMsg());
-//        response.setContentType("text/html;charset=UTF-8");
-//        response.getWriter().write(JSON.toJSON(responseData).toString());
+        checkAuthRequest.setToken(token);//把cookie中token封装到checkAuthRequest中
+        //CheckAuthResponse就在这里用过一次， 起一个中转作用, 主要为了查看，userInfo是否传入成功
+        CheckAuthResponse checkAuthResponse= userLoginService.freeAndValidToken(checkAuthRequest);
+        if(checkAuthResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())){
+            //request域中加了一些信息
+            request.setAttribute(USER_INFO_KEY,checkAuthResponse.getUserInfo()); //保存token解析后的信息后续要用
+            return super.preHandle(request, response, handler);//就是true
+        }
+        ResponseData responseData=new ResponseUtil().setErrorMsg(checkAuthResponse.getMsg());
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().write(JSON.toJSON(responseData).toString());
         return false;
     }
 
-    private boolean isAnoymous(HandlerMethod handlerMethod) {
+    private boolean isAnonymous(HandlerMethod handlerMethod) {
 
         // 包含Controller处理方法的那个Controller对象
         Object bean = handlerMethod.getBean();
@@ -77,13 +82,13 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
         // 获取Controller类对应的Class对象
         Class clazz = bean.getClass();
         // 如果说Controller类上 有Anoymous
-        if (clazz.getAnnotation(Anoymous.class) != null) {
+        if (clazz.getAnnotation(Anonymous.class) != null) {
             return true;
         }
 
         // 获取action方法对应的Method对象
         Method method = handlerMethod.getMethod();
         // 如果在方法上获取到了Anoymous注解，返回true，否则返回false
-        return method.getAnnotation(Anoymous.class) != null;
+        return method.getAnnotation(Anonymous.class) != null;
     }
 }

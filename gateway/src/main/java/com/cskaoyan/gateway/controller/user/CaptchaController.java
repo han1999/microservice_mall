@@ -4,7 +4,7 @@ import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.CookieUtil;
 import com.mall.user.IKaptchaService;
-import com.mall.user.annotation.Anoymous;
+import com.mall.user.annotation.Anonymous;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.KaptchaCodeRequest;
 import com.mall.user.dto.KaptchaCodeResponse;
@@ -25,7 +25,7 @@ public class CaptchaController {
     /**
      * 获取验证码
      */
-    @Anoymous
+    @Anonymous
     @GetMapping("/kaptcha")
     public ResponseData getKaptchaCode(HttpServletResponse response) {
         KaptchaCodeRequest kaptchaCodeRequest = new KaptchaCodeRequest();
@@ -41,7 +41,7 @@ public class CaptchaController {
         return new ResponseUtil<>().setErrorMsg(kaptchaCodeResponse.getCode());
     }
 
-    @Anoymous
+    @Anonymous
     @PostMapping("/kaptcha")
     public ResponseData validKaptchaCode(@RequestBody String code, HttpServletRequest httpServletRequest) {
         KaptchaCodeRequest request = new KaptchaCodeRequest();
@@ -54,4 +54,5 @@ public class CaptchaController {
         }
         return new ResponseUtil<>().setErrorMsg(response.getCode());
     }
+
 }

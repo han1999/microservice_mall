@@ -7,6 +7,11 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 这里的isParent在数据库中对应is_parent且是tinyint类型，1为true， 0为false
+ * 不知道能不能自动转换
+ * 经过测试， 可以自动转换 1转换为true  0转换为false
+ */
 @Table(name = "tb_item_cat")
 public class ItemCat implements Serializable {
     @Id

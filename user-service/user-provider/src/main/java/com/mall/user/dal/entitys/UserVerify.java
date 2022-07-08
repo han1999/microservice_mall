@@ -17,20 +17,19 @@ public class UserVerify {
 
     private String username;
 
-    //注册时生成的唯一号
+    //注册时生成的唯一号 实际上起着主键的功能
     private String uuid;
 
     //注册时间
     @Column(name = "register_date")
     private Date registerDate;
 
-    //是否验证过期
+    //是否验证过期 Y/N
     @Column(name = "is_verify")
     private String isVerify;
 
-    //是否过期
+    //是否过期 Y/N
     @Column(name = "is_expire")
     private String isExpire;
-
 
 }

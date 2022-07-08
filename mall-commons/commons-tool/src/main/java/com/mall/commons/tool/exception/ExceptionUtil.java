@@ -4,7 +4,7 @@ package com.mall.commons.tool.exception;
 
 import com.mall.commons.result.AbstractResponse;
 
-public class ExceptionUtil {
+public class ExceptionUtil <T>{
 
     /**
      * 将下层抛出的异常转换为resp返回码
@@ -17,6 +17,7 @@ public class ExceptionUtil {
         if (!(e instanceof Exception)) {
             return null;
         }
+        //这四个判断好像也没啥必要
         if (e instanceof ValidateException) {
             response.setCode(((ValidateException) e).getErrorCode());
             response.setMsg(e.getMessage());
@@ -31,4 +32,5 @@ public class ExceptionUtil {
         }
         return response;
     }
+
 }

@@ -63,8 +63,9 @@ public class Member {
     private Double balance;
 
     /**
-     *  是否激活,默认值N，激活Y
+     * 是否激活,默认值N，激活Y
      */
+    //这里应该是写错了！！！
     @Column(name = "isVerified")
     private String isVerified;
 

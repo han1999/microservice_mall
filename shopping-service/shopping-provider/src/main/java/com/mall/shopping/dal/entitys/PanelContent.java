@@ -8,6 +8,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 自动转换 property:panelId  column:panel_id
+ */
 @Data
 @Table(name = "tb_panel_content")
 public class PanelContent implements Serializable {

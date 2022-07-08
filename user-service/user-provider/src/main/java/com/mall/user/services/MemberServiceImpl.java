@@ -75,7 +75,7 @@ public class MemberServiceImpl implements IMemberService {
 //            request.requestCheck();
 //            CheckAuthRequest checkAuthRequest = new CheckAuthRequest();
 //            checkAuthRequest.setToken(request.getToken());
-//            CheckAuthResponse authResponse = userLoginService.validToken(checkAuthRequest);
+//            CheckAuthResponse authResponse = userLoginService.freeAndValidToken(checkAuthRequest);
 //            if (!authResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
 //                response.setCode(authResponse.getCode());
 //                response.setMsg(authResponse.getMsg());

@@ -60,14 +60,16 @@
             <artifactId>commons-core</artifactId>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>com.spring4all</groupId>-->
-            <!--<artifactId>swagger-spring-boot-starter</artifactId>-->
+        <!--<groupId>com.spring4all</groupId>-->
+        <!--<artifactId>swagger-spring-boot-starter</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!--并没有依赖于整个服务，而只依赖于服务的接口（provider不依赖)-->
 
         <dependency>
             <groupId>com.mall.shopping</groupId>
@@ -76,15 +78,17 @@
         </dependency>
 
         <dependency>
-        <groupId>com.mall.order</groupId>
-        <version>1.0-SNAPSHOT</version>
-        <artifactId>order-api</artifactId>
-    </dependency>
+            <groupId>com.mall.order</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <artifactId>order-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.mall.user</groupId>
             <artifactId>user-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>com.mall.user</groupId>
             <artifactId>user-sdk</artifactId>

@@ -41,8 +41,11 @@ public class KaptchaServiceImpl implements IKaptchaService {
             String uuid= UUID.randomUUID().toString();
             RBucket rBucket=redissonClient.getBucket(KAPTCHA_UUID+uuid);
             rBucket.set(capText.getCode());
+            //capText.getCode()就是产生的验证码 对应于一个uuid, 两个存储在redis中
             log.info("产生的验证码:{},uuid:{}",capText.getCode(),uuid);
             rBucket.expire(120, TimeUnit.SECONDS);
+
+            //capText.getImg 就是验证码图片
             response.setImageCode(capText.getImg());
             response.setUuid(uuid);
             response.setCode(SysRetCodeConstants.SUCCESS.getCode());
