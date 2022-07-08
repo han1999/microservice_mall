@@ -74,4 +74,22 @@ public class CartsController {
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 
+    @DeleteMapping("/carts/{uid}/{pid}")
+    public ResponseData deleteCarts(@PathVariable("uid") Long uid, @PathVariable("pid") Long pid) {
+        DeleteCartItemRequest request = new DeleteCartItemRequest();
+        request.setUserId(uid);
+        request.setItemId(pid);
+        DeleteCartItemResponse response = cartService.deleteCartItem(request);
+        if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData("成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+    @DeleteMapping("/items/{uid}")
+    public ResponseData
+
+
+
+
 }

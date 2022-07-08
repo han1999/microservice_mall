@@ -42,7 +42,7 @@ public class CartServiceImpl implements ICartService {
              * 如果购物车是空的，那么页面显示不了了
              */
             RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
-            log.info(request.getUserId()+"对应的hash是否存在："+userCartMap.isExists());
+            log.info(request.getUserId() + "对应的hash是否存在：" + userCartMap.isExists());
             ArrayList<CartProductDto> cartProductDtos = new ArrayList<>();
             /**
              * redisson的机制：userCartMap不为null, 可以通过RMap.isExists()来判断对应的hash是否存在
@@ -81,12 +81,12 @@ public class CartServiceImpl implements ICartService {
                 cartProductDto.setProductNum(request.getNum().longValue());
                 cartProductDto.setChecked("true");
                 userCartMap.put(itemId, cartProductDto);
-            }else {
+            } else {
                 /**
                  * cartProductDto.getProductNum()+request.getNum()
                  * 是Long+Integer， 自动转换成Long了
                  */
-                cartProductDto.setProductNum(cartProductDto.getProductNum()+request.getNum());
+                cartProductDto.setProductNum(cartProductDto.getProductNum() + request.getNum());
                 userCartMap.put(itemId, cartProductDto);
             }
             return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
@@ -105,9 +105,13 @@ public class CartServiceImpl implements ICartService {
             RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
             Long itemId = request.getItemId();
             CartProductDto cartProductDto = userCartMap.get(itemId);
-            cartProductDto.setProductNum(request.getNum().longValue());
-            userCartMap.put(itemId, cartProductDto);
-            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+            if (cartProductDto != null) {
+                cartProductDto.setProductNum(request.getNum().longValue());
+                cartProductDto.setChecked(request.getChecked());
+                userCartMap.put(itemId, cartProductDto);
+                return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+            }
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.DB_EXCEPTION);
         } catch (Exception e) {
             log.error("CartServiceImpl.updateCartNum occurs Exception :" + e);
             ExceptionProcessorUtils.wrapperHandlerException(response, e);
@@ -122,7 +126,24 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public DeleteCartItemResponse deleteCartItem(DeleteCartItemRequest request) {
-        return null;
+        DeleteCartItemResponse response = new DeleteCartItemResponse();
+        try {
+            request.requestCheck();
+            RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
+            Long itemId = request.getItemId();
+            /**
+             * 对 userCartMap 的操作就相当于对 redis的操作，不需要有一个flush过程(应该是自动flush了)
+             */
+            userCartMap.remove(itemId);
+            if (userCartMap.get(itemId) == null) {
+                return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+            }
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.DB_EXCEPTION);
+        } catch (Exception e) {
+            log.error("CartServiceImpl.deleteCartItem occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
 
     @Override
