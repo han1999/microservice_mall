@@ -5,10 +5,7 @@ import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.RequestUtils;
 import com.mall.order.OrderCoreService;
 import com.mall.order.constant.OrderRetCode;
-import com.mall.order.dto.CreateOrderRequest;
-import com.mall.order.dto.CreateOrderResponse;
-import com.mall.order.dto.OrderListRequest;
-import com.mall.order.dto.OrderListResponse;
+import com.mall.order.dto.*;
 import com.mall.user.intercepter.TokenIntercepter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -54,6 +51,22 @@ public class OrderController {
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
         request.setUserId(uid);
         OrderListResponse response = orderCoreService.getAllOrders(request);
+        if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response);
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+    /**
+     * id 虽然是数字的形式，但是应该也可以被识别为字符串
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/{id}")
+    public ResponseData getOrderDetail(@PathVariable("id") String orderId) {
+        OrderDetailRequest request = new OrderDetailRequest();
+        request.setOrderId(orderId);
+        OrderDetailResponse response = orderCoreService.getOrderDetail(request);
         if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
             return new ResponseUtil<>().setData(response);
         }

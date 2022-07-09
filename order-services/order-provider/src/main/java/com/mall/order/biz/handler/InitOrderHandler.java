@@ -51,6 +51,7 @@ public class InitOrderHandler extends AbstractTransHandler {
         order.setOrderId(orderId);
         order.setUserId(createOrderContext.getUserId());
         order.setBuyerNick(createOrderContext.getBuyerNickName());
+        //payment和orderTotal写法差距还挺大的
         order.setPayment(createOrderContext.getOrderTotal());
         order.setCreateTime(new Date());
         order.setUpdateTime(new Date());

@@ -83,7 +83,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 		OrderListResponse response = new OrderListResponse();
 		try {
 			/**
-			 * 忘记PageHelper怎么用的了 (使用不当好像会导致servlet映射不到）
+			 * 忘记PageHelper怎么用的了
 			 * 1. mybatis执行之前用 PageHelper.start
 			 * 2. new PageInfo<>()....
 			 */
@@ -102,13 +102,11 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 				orderItemExample.createCriteria().andEqualTo("orderId", order.getOrderId());
 				List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
 
-				List<OrderItemDto> orderItemDtos = orderConverter.item2dto(orderItems);
+				List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
 				orderDetailInfo.setOrderItemDto(orderItemDtos);
 
-				Example orderShippingExample = new Example(OrderShipping.class);
-				orderShippingExample.createCriteria().andEqualTo("orderId", order.getOrderId());
-				List<OrderShipping> orderShippings = orderShippingMapper.selectByExample(orderShippingExample);
-				OrderShippingDto orderShippingDto = orderConverter.shipping2dto(orderShippings.get(0));
+				OrderShipping orderShipping = orderShippingMapper.selectByPrimaryKey(order.getOrderId());
+				OrderShippingDto orderShippingDto = orderConverter.shipping2dto(orderShipping);
 
 				orderDetailInfo.setOrderShippingDto(orderShippingDto);
 				detailInfoList.add(orderDetailInfo);
@@ -120,6 +118,36 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
 		} catch (Exception e) {
 			log.error("OrderCoreServiceImpl.getAllOrders occurs Exception :" + e);
+			ExceptionProcessorUtils.wrapperHandlerException(response, e);
+		}
+		return response;
+	}
+
+	@Override
+	public OrderDetailResponse getOrderDetail(OrderDetailRequest request) {
+		OrderDetailResponse response = new OrderDetailResponse();
+		try {
+			request.requestCheck();
+			String orderId = request.getOrderId();
+			Order order = orderMapper.selectByPrimaryKey(orderId);
+			response.setUserId(order.getUserId());
+			response.setOrderTotal(order.getPayment().longValue());
+			OrderShipping orderShipping = orderShippingMapper.selectByPrimaryKey(orderId);
+			response.setUserName(orderShipping.getReceiverName());
+			response.setTel(orderShipping.getReceiverPhone());
+			response.setStreetName(orderShipping.getReceiverAddress());
+
+			Example orderItemExample = new Example(OrderItem.class);
+			/**
+			 * property 说明是 类里面的属性
+			 */
+			orderItemExample.createCriteria().andEqualTo("orderId", orderId);
+			List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
+			List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
+			response.setGoodsList(orderItemDtos);
+			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
+		} catch (Exception e) {
+			log.error("OrderCoreServiceImpl.getOrderDetail occurs Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);
 		}
 		return response;

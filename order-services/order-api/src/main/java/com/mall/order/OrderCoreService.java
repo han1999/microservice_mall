@@ -17,4 +17,6 @@ public interface OrderCoreService {
 
     OrderListResponse getAllOrders(OrderListRequest request);
 
+    OrderDetailResponse getOrderDetail(OrderDetailRequest request);
+
 }
