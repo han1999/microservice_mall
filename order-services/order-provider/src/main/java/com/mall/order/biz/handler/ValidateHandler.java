@@ -22,7 +22,7 @@ public class ValidateHandler extends AbstractTransHandler {
     /**
      * pom文件中有user-api
      */
-    @Reference(check = false)
+    @Reference(timeout = 3000, retries = 0, check = false)
     private IMemberService memberService;
 
     /**

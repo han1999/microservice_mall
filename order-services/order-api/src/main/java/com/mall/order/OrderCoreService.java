@@ -9,11 +9,12 @@ public interface OrderCoreService {
 
     /**
      * 创建订单
+     *
      * @param request
      * @return
      */
     CreateOrderResponse createOrder(CreateOrderRequest request);
 
-
+    OrderListResponse getAllOrders(OrderListRequest request);
 
 }

@@ -7,13 +7,12 @@ import com.mall.order.OrderCoreService;
 import com.mall.order.constant.OrderRetCode;
 import com.mall.order.dto.CreateOrderRequest;
 import com.mall.order.dto.CreateOrderResponse;
+import com.mall.order.dto.OrderListRequest;
+import com.mall.order.dto.OrderListResponse;
 import com.mall.user.intercepter.TokenIntercepter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -36,6 +35,7 @@ public class OrderController {
     public ResponseData createOrder(@RequestBody CreateOrderRequest request, HttpServletRequest httpServletRequest) {
         /**
          * CreateOrderRequest的orderTotal是BigDecimal类型， 不知道能不能正确传入
+         * 可以正确传入！
          */
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
         request.setUserId(uid);
@@ -45,6 +45,17 @@ public class OrderController {
         CreateOrderResponse response = orderCoreService.createOrder(request);
         if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
             return new ResponseUtil<>().setData(response.getOrderId());
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+    @GetMapping("/order")
+    public ResponseData getAllOrders(OrderListRequest request, HttpServletRequest httpServletRequest) {
+        Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
+        request.setUserId(uid);
+        OrderListResponse response = orderCoreService.getAllOrders(request);
+        if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response);
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }

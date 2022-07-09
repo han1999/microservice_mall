@@ -5,6 +5,7 @@ import com.mall.order.biz.context.TransHandlerContext;
 import com.mall.order.constants.OrderConstants;
 import com.mall.order.dal.entitys.Order;
 import com.mall.order.dal.entitys.OrderItem;
+import com.mall.order.dal.persistence.OrderItemMapper;
 import com.mall.order.dal.persistence.OrderMapper;
 import com.mall.order.dto.CartProductDto;
 import com.mall.order.utils.GlobalIdGeneratorUtil;
@@ -31,6 +32,9 @@ public class InitOrderHandler extends AbstractTransHandler {
 
     @Autowired
     GlobalIdGeneratorUtil globalIdGeneratorUtil;
+
+    @Autowired
+    OrderItemMapper orderItemMapper;
 
     @Override
     public boolean isAsync() {
@@ -68,6 +72,7 @@ public class InitOrderHandler extends AbstractTransHandler {
             orderItem.setTitle(cartProductDto.getProductName());
             BigDecimal fee = cartProductDto.getSalePrice().multiply(new BigDecimal(cartProductDto.getProductNum()));
             orderItem.setTotalFee(fee.doubleValue());
+            orderItemMapper.insert(orderItem);
         }
         createOrderContext.setOrderId(orderId);
         return true;

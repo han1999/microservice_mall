@@ -51,11 +51,15 @@ public class SubStockHandler extends AbstractTransHandler {
 		}
 		buyProductIds.sort(Long::compareTo);
 
-		List<Stock> stocksForUpdate = new ArrayList<>();
-		stocksForUpdate = stockMapper.findStocksForUpdate(buyProductIds);
+		List<Stock> stocksForUpdate = stockMapper.findStocksForUpdate(buyProductIds);
+		log.info("stockForUpdate.size():"+stocksForUpdate.size());
 //		if (CollectionUtils.isEmpty(stocksForUpdate)) {
 //			throw new BizException(OrderRetCode.DB_EXCEPTION.getCode(), "库存没有初始化");
 //		}
+
+		/**
+		 * 这里的stockForUpdate永远不为null，应该是被动态代理了,mybatis中有具体的List的实现
+		 */
 		if (stocksForUpdate.size() != buyProductIds.size()) {
 //			throw new BizException(OrderRetCode.DB_EXCEPTION.getCode(), "部分商品库存没有初始化");
 			/**
