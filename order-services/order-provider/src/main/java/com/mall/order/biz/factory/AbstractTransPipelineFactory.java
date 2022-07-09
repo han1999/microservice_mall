@@ -13,7 +13,7 @@ import com.mall.order.biz.convert.TransConvert;
 /**
  *  cskaoyan
  */
-public abstract class AbstranctTransPipelineFactory <T extends AbstractRequest> implements TransPipelineFactory<T>{
+public abstract class AbstractTransPipelineFactory<T extends AbstractRequest> implements TransPipelineFactory<T>{
 
     @Override
     public final TransOutboundInvoker build(T obj) {

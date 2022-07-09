@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class OrderProcessPipelineFactory extends AbstranctTransPipelineFactory<CreateOrderRequest> {
+public class OrderProcessPipelineFactory extends AbstractTransPipelineFactory<CreateOrderRequest> {
 
     @Autowired
     private InitOrderHandler initOrderHandler;

@@ -97,7 +97,20 @@ public class CartsController {
         return new ResponseUtil<>().setErrorMsg(resposne.getMsg());
     }
 
-
+    /**
+     * 虽然没发现，浏览器啥时候请求这个接口的，但是还是写一下吧
+     */
+    @PutMapping("/items")
+    public ResponseData checkAllItem(@RequestBody CheckAllItemRequest request) {
+        /**
+         * userId在类中是Long类型的，但是json里面是string类型的，但是可以完成转换
+         */
+        CheckAllItemResponse response = cartService.checkAllCartItem(request);
+        if (ShoppingRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response.getMsg());
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
 
 
 }

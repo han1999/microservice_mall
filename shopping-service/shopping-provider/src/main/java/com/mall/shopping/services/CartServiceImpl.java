@@ -15,9 +15,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @description:
@@ -123,7 +121,22 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public CheckAllItemResponse checkAllCartItem(CheckAllItemRequest request) {
-        return null;
+        CheckAllItemResponse response = new CheckAllItemResponse();
+        try {
+            request.requestCheck();
+            RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(request.getUserId().toString());
+            Set<Map.Entry<Long, CartProductDto>> entries = userCartMap.entrySet();
+            for (Map.Entry<Long, CartProductDto> entry : entries) {
+                CartProductDto cartProductDto = entry.getValue();
+                cartProductDto.setChecked(request.getChecked());
+                userCartMap.put(entry.getKey(), cartProductDto);
+            }
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+        } catch (Exception e) {
+            log.error("CartServiceImpl.checkAllCartItem occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
 
     @Override
@@ -171,8 +184,28 @@ public class CartServiceImpl implements ICartService {
         return resposne;
     }
 
+    /**
+     * 这个接口，是为了订单业务准备的
+     * @param request
+     * @return
+     */
     @Override
     public ClearCartItemResponse clearCartItemByUserID(ClearCartItemRequest request) {
-        return null;
+        ClearCartItemResponse response = new ClearCartItemResponse();
+        try {
+            request.requestCheck();
+            Long userId = request.getUserId();
+            RMap<Long, CartProductDto> userCartMap = redissonClient.getMap(userId.toString());
+            List<Long> productIds = request.getProductIds();
+            for (Long productId : productIds) {
+                userCartMap.remove(productId);
+            }
+            return ResponseUtils.setCodeAndMsg(response, ShoppingRetCode.SUCCESS);
+        } catch (Exception e) {
+            log.error("CartServiceImpl.clearCartItemByUserID occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
+
 }
