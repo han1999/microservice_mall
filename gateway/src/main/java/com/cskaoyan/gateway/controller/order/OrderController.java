@@ -75,8 +75,14 @@ public class OrderController {
     }
 
 
-//    @PostMapping("/cancelOrder")
-//    public ResponseData cancelOrder()
+    @PostMapping("/cancelOrder")
+    public ResponseData cancelOrder(@RequestBody CancelOrderRequest request) {
+        CancelOrderResponse response = orderCoreService.cancelOrder(request);
+        if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response.getMsg());
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
 
 
     @DeleteMapping("/order/{id}")
@@ -89,4 +95,5 @@ public class OrderController {
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
+
 }

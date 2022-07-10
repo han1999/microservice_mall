@@ -10,7 +10,7 @@ import java.util.List;
  * @Description:
  **/
 public interface StockMapper extends TkMapper<Stock> {
- void updateStock(Stock stock);
+ int updateStock(Stock stock);
  Stock selectStockForUpdate(Long itemId);
  Stock selectStock(Long itemId);
 

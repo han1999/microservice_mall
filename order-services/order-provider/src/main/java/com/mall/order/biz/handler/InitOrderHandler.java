@@ -69,7 +69,7 @@ public class InitOrderHandler extends AbstractTransHandler {
             orderItem.setNum(cartProductDto.getProductNum().intValue());
             orderItem.setPicPath(cartProductDto.getProductImg());
             orderItem.setPrice(cartProductDto.getSalePrice().doubleValue());
-            orderItem.setStatus(1);
+            orderItem.setStatus(OrderConstants.ORDERITEM_STATUS_STOCK_LOCK);
             orderItem.setTitle(cartProductDto.getProductName());
             BigDecimal fee = cartProductDto.getSalePrice().multiply(new BigDecimal(cartProductDto.getProductNum()));
             orderItem.setTotalFee(fee.doubleValue());

@@ -7,6 +7,7 @@ import com.mall.order.biz.TransOutboundInvoker;
 import com.mall.order.biz.context.AbsTransHandlerContext;
 import com.mall.order.biz.factory.OrderProcessPipelineFactory;
 import com.mall.order.constant.OrderRetCode;
+import com.mall.order.constants.OrderConstants;
 import com.mall.order.converter.OrderConverter;
 import com.mall.order.dal.entitys.Order;
 import com.mall.order.dal.entitys.OrderItem;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -188,7 +190,10 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 				stock.setItemId(itemId);
 				stock.setLockCount(-num);
 				stock.setStockCount(num.longValue());
-				stockMapper.updateStock(stock);
+				int stockUpdate = stockMapper.updateStock(stock);
+				if (stockUpdate == 0) {
+					return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_SAVE_EXCEPTION);
+				}
 			}
 			Example orderItemExample = new Example(OrderItem.class);
 			orderItemExample.createCriteria().andEqualTo("orderId", orderId);
@@ -201,6 +206,57 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
 		} catch (Exception e) {
 			log.error("OrderCoreServiceImpl.deleteOrder occurs Exception :" + e);
+			ExceptionProcessorUtils.wrapperHandlerException(response, e);
+		}
+		return response;
+	}
+
+	@Override
+	public CancelOrderResponse cancelOrder(CancelOrderRequest request) {
+		CancelOrderResponse response = new CancelOrderResponse();
+		try {
+			request.requestCheck();
+
+			String orderId = request.getOrderId();
+			/**
+			 * orderShipping不改了， orderItem和order也不删除，而是改变状态
+			 */
+			/**
+			 * 库存锁定状态 1库存已锁定 2库存已释放 3-库存减扣成功
+			 */
+
+			/**
+			 * 更新时间要写上
+			 */
+			/**
+			 * 原本updateStockStatus返回的是void， 我改成int， 应该没有问题
+			 */
+			int orderItemUpdate = orderItemMapper.updateStockStatus(OrderConstants.ORDERITEM_STATUS_STOCK_FREE, orderId, new Date());
+
+			List<OrderItem> orderItems = orderItemMapper.queryByOrderId(orderId);
+			for (OrderItem orderItem : orderItems) {
+				Integer num = orderItem.getNum();
+				Stock stock = new Stock();
+				stock.setItemId(orderItem.getItemId());
+				stock.setStockCount(num.longValue());
+				stock.setLockCount(-num);
+				int stockUpdate = stockMapper.updateStock(stock);
+				if (stockUpdate == 0) {
+					return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_SAVE_EXCEPTION);
+				}
+			}
+
+			Order order = new Order();
+			order.setOrderId(orderId);
+			order.setStatus(OrderConstants.ORDER_STATUS_TRANSACTION_CANCEL);
+			order.setUpdateTime(new Date());
+			int orderUpdate = orderMapper.updateByPrimaryKeySelective(order);
+			if (orderItemUpdate == 0 || orderUpdate == 0) {
+				return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_SAVE_EXCEPTION);
+			}
+			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
+		} catch (Exception e) {
+			log.error("OrderCoreServiceImpl.cancelOrder occurs Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);
 		}
 		return response;
