@@ -59,6 +59,7 @@ public class OrderController {
 
     /**
      * id 虽然是数字的形式，但是应该也可以被识别为字符串
+     * 确实可以！
      * @param orderId
      * @return
      */
@@ -69,6 +70,22 @@ public class OrderController {
         OrderDetailResponse response = orderCoreService.getOrderDetail(request);
         if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
             return new ResponseUtil<>().setData(response);
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+
+//    @PostMapping("/cancelOrder")
+//    public ResponseData cancelOrder()
+
+
+    @DeleteMapping("/order/{id}")
+    public ResponseData deleteOrder(@PathVariable("id") String orderId) {
+        DeleteOrderRequest request = new DeleteOrderRequest();
+        request.setOrderId(orderId);
+        DeleteOrderResponse response=orderCoreService.deleteOrder(request);
+        if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
+            return new ResponseUtil<>().setData(response.getMsg());
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }

@@ -19,4 +19,5 @@ public interface OrderCoreService {
 
     OrderDetailResponse getOrderDetail(OrderDetailRequest request);
 
+    DeleteOrderResponse deleteOrder(DeleteOrderRequest request);
 }

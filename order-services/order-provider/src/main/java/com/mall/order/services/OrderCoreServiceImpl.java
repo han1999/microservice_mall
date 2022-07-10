@@ -11,9 +11,11 @@ import com.mall.order.converter.OrderConverter;
 import com.mall.order.dal.entitys.Order;
 import com.mall.order.dal.entitys.OrderItem;
 import com.mall.order.dal.entitys.OrderShipping;
+import com.mall.order.dal.entitys.Stock;
 import com.mall.order.dal.persistence.OrderItemMapper;
 import com.mall.order.dal.persistence.OrderMapper;
 import com.mall.order.dal.persistence.OrderShippingMapper;
+import com.mall.order.dal.persistence.StockMapper;
 import com.mall.order.dto.*;
 import com.mall.order.utils.ExceptionProcessorUtils;
 import com.mall.order.utils.ResponseUtils;
@@ -48,6 +50,9 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 
 	@Autowired
 	OrderConverter orderConverter;
+
+    @Autowired
+    StockMapper stockMapper;
 
 
 	/**
@@ -98,11 +103,12 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			for (Order order : orderList) {
 				OrderDetailInfo orderDetailInfo = orderConverter.order2detail(order);
 
-				Example orderItemExample = new Example(OrderItem.class);
-				orderItemExample.createCriteria().andEqualTo("orderId", order.getOrderId());
-				List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
+//				Example orderItemExample = new Example(OrderItem.class);
+//				orderItemExample.createCriteria().andEqualTo("orderId", order.getOrderId());
+//				List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
+                List<OrderItem> orderItems = orderItemMapper.queryByOrderId(order.getOrderId());
 
-				List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
+                List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
 				orderDetailInfo.setOrderItemDto(orderItemDtos);
 
 				OrderShipping orderShipping = orderShippingMapper.selectByPrimaryKey(order.getOrderId());
@@ -137,17 +143,64 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			response.setTel(orderShipping.getReceiverPhone());
 			response.setStreetName(orderShipping.getReceiverAddress());
 
-			Example orderItemExample = new Example(OrderItem.class);
-			/**
-			 * property 说明是 类里面的属性
-			 */
-			orderItemExample.createCriteria().andEqualTo("orderId", orderId);
-			List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
-			List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
+//			Example orderItemExample = new Example(OrderItem.class);
+//			/**
+//			 * property 说明是 类里面的属性
+//			 */
+//			orderItemExample.createCriteria().andEqualTo("orderId", orderId);
+//			List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
+            List<OrderItem> orderItems = orderItemMapper.queryByOrderId(orderId);
+            List<OrderItemDto> orderItemDtos = orderConverter.items2dtos(orderItems);
 			response.setGoodsList(orderItemDtos);
 			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
 		} catch (Exception e) {
 			log.error("OrderCoreServiceImpl.getOrderDetail occurs Exception :" + e);
+			ExceptionProcessorUtils.wrapperHandlerException(response, e);
+		}
+		return response;
+	}
+
+    @Override
+    public DeleteOrderResponse deleteOrder(DeleteOrderRequest request) {
+        /**
+         * 按照以下顺序反着来
+         */
+  /*      pipeline.addLast(validateHandler);
+        pipeline.addLast(subStockHandler);
+        pipeline.addLast(initOrderHandler);
+        pipeline.addLast(logisticalHandler);
+        pipeline.addLast(clearCartItemHandler);
+        pipeline.addLast(sendMessageHandler);*/
+        DeleteOrderResponse response = new DeleteOrderResponse();
+        try {
+            request.requestCheck();
+			String orderId = request.getOrderId();
+			int orderShippingDelete = orderShippingMapper.deleteByPrimaryKey(orderId);
+			/**
+             * 通过orderItem对stock进行更改
+             */
+            List<OrderItem> orderItems = orderItemMapper.queryByOrderId(orderId);
+			for (OrderItem orderItem : orderItems) {
+				Long itemId = orderItem.getItemId();
+				Integer num = orderItem.getNum();
+
+				Stock stock = new Stock();
+				stock.setItemId(itemId);
+				stock.setLockCount(-num);
+				stock.setStockCount(num.longValue());
+				stockMapper.updateStock(stock);
+			}
+			Example orderItemExample = new Example(OrderItem.class);
+			orderItemExample.createCriteria().andEqualTo("orderId", orderId);
+			int orderItemDelete= orderItemMapper.deleteByExample(orderItemExample);
+
+			int orderDelete = orderMapper.deleteByPrimaryKey(orderId);
+			if (orderShippingDelete == 0 || orderItemDelete == 0 || orderDelete == 0) {
+				return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_EXCEPTION);
+			}
+			return ResponseUtils.setCodeAndMsg(response, OrderRetCode.SUCCESS);
+		} catch (Exception e) {
+			log.error("OrderCoreServiceImpl.deleteOrder occurs Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);
 		}
 		return response;
