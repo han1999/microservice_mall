@@ -19,4 +19,12 @@ public class OrderConstants {
     public static int ORDERITEM_STATUS_STOCK_LOCK = 1;
     public static int ORDERITEM_STATUS_STOCK_FREE = 2;
     public static int ORDERITEM_STATUS_STOCK_DEDUCTION = 3;
+
+    public static final String PRODUCER_GROUP = "delay_order_cancel_producer";
+    public static final String NAME_SERVER = "127.0.0.1:9876";
+    public static final String DELAY_TOPIC = "delay_order_cancel";
+    public static final int DELAY_LEVEL = 16;
+//    messageDelayLevel=1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+    public static final String CONSUMER_GROUP = "delay_order_cancel_consumer";
+
 }

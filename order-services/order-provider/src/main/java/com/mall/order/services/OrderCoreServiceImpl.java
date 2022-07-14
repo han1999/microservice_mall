@@ -230,6 +230,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			 */
 			/**
 			 * 原本updateStockStatus返回的是void， 我改成int， 应该没有问题
+			 * 肯定没问题呀，本来就应该返回int，返回void很少见到
 			 */
 			int orderItemUpdate = orderItemMapper.updateStockStatus(OrderConstants.ORDERITEM_STATUS_STOCK_FREE, orderId, new Date());
 
