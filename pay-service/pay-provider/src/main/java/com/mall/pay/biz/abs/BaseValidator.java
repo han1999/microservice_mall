@@ -2,17 +2,9 @@
 package com.mall.pay.biz.abs;
 
 import com.mall.commons.result.AbstractRequest;
-import com.mall.commons.tool.exception.BizException;
-import com.mall.order.OrderQueryService;
-import com.mall.order.dto.OrderDetailRequest;
-import com.mall.order.dto.OrderDetailResponse;
-import com.mall.pay.constants.PayReturnCodeEnum;
-import com.mall.pay.dto.PaymentRequest;
 import com.mall.pay.utils.ParamValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * 验证器基类
@@ -34,15 +26,15 @@ public abstract class BaseValidator implements Validator {
     /**
      * 检验订单的公共方法
      * @param request
-     * @param orderQueryService
+     * @param orderCoreService
      */
-    public void commonValidate(AbstractRequest request, OrderQueryService orderQueryService) {
+/*    public void commonValidate(AbstractRequest request, OrderCoreService orderCoreService) {
         if (request instanceof PaymentRequest) {
             PaymentRequest paymentRequest = (PaymentRequest) request;
             //校验订单是否存在
             OrderDetailRequest orderDetailRequest = new OrderDetailRequest();
             orderDetailRequest.setOrderId(paymentRequest.getTradeNo());
-            OrderDetailResponse orderDetailResponse = orderQueryService.orderDetail(orderDetailRequest);
+            OrderDetailResponse orderDetailResponse = orderCoreService.getOrderDetail(orderDetailRequest);
             if (null == orderDetailResponse) {
                 throw new BizException(PayReturnCodeEnum.NO_ORDER_NOT_EXIST.getCode(), PayReturnCodeEnum.NO_ORDER_NOT_EXIST.getMsg());
             }
@@ -56,5 +48,5 @@ public abstract class BaseValidator implements Validator {
             }
         }
 
-    }
+    }*/
 }

@@ -2,11 +2,7 @@ package com.mall.pay.services;
 
 import com.mall.order.OrderCoreService;
 import com.mall.order.OrderQueryService;
-import com.mall.order.constant.OrderConstants;
-import com.mall.order.dto.PayOrderSuccessRequest;
-import com.mall.order.dto.PayOrderSuccessResponse;
 import com.mall.pay.PayCoreService;
-import com.mall.pay.biz.payment.constants.PayResultEnum;
 import com.mall.pay.biz.payment.constants.PaymentConstants;
 import com.mall.pay.constants.PayReturnCodeEnum;
 import com.mall.pay.dal.entitys.Payment;
@@ -15,15 +11,14 @@ import com.mall.pay.dto.PaymentRequest;
 import com.mall.pay.dto.alipay.AlipayQueryRetResponse;
 import com.mall.pay.dto.alipay.AlipaymentResponse;
 import com.mall.pay.utils.ExceptionProcessorUtils;
+import com.mall.pay.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 
 @Slf4j
@@ -36,7 +31,7 @@ public class PayCoreServiceImpl implements PayCoreService {
     @Autowired
     PaymentMapper paymentMapper;
 
-    @Reference(check = false)
+    @Reference(check = false, retries = 0, timeout = 3000)
     OrderCoreService orderCoreService;
 
     @Reference
@@ -44,51 +39,75 @@ public class PayCoreServiceImpl implements PayCoreService {
 
     @Override
     public AlipaymentResponse aliPay(PaymentRequest request) {
-        request.requestCheck();
-
-        AlipaymentResponse alipaymentResponse = new AlipaymentResponse();
-        alipaymentResponse.setCode(PayReturnCodeEnum.SUCCESS.getCode());
-        alipaymentResponse.setMsg(PayReturnCodeEnum.SUCCESS.getMsg());
-
-        String code = helper.getCode(request);
-        if (code == null) {
-          // 获取二维码失败
-            alipaymentResponse.setCode(PayReturnCodeEnum.GET_CODE_FALIED.getCode());
-            alipaymentResponse.setMsg(PayReturnCodeEnum.GET_CODE_FALIED.getMsg());
-            return alipaymentResponse;
-        }
-
-        Payment payment = generatePayment(request);
-        alipaymentResponse.setQrCode(code);
+        AlipaymentResponse response = new AlipaymentResponse();
         try {
-            paymentMapper.insert(payment);
+            request.requestCheck();
+            String qrCode = helper.getQrCode(request);
+            if (qrCode == null) {
+                return ResponseUtils.setCodeAndMsg(response, PayReturnCodeEnum.GET_CODE_FALIED);
+            }
+            Payment payment = generatePayment(request);
+            int insert = paymentMapper.insert(payment);
+            response.setQrCode(qrCode);
+            return ResponseUtils.setCodeAndMsg(response, PayReturnCodeEnum.SUCCESS);
         } catch (Exception e) {
-            log.error("PayCoreServiceImpl.aliPay occurs error: " + e);
-            ExceptionProcessorUtils.wrapperHandlerException(alipaymentResponse, e);
+            log.error("PayCoreServiceImpl.aliPay occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
         }
-        return alipaymentResponse;
+        return response;
+
+//        request.requestCheck();
+//
+//        AlipaymentResponse alipaymentResponse = new AlipaymentResponse();
+//        alipaymentResponse.setCode(PayReturnCodeEnum.SUCCESS.getQrCode());
+//        alipaymentResponse.setMsg(PayReturnCodeEnum.SUCCESS.getMsg());
+//
+//        String code = helper.getQrCode(request);
+//        if (code == null) {
+//          // 获取二维码失败
+//            alipaymentResponse.setCode(PayReturnCodeEnum.GET_CODE_FALIED.getQrCode());
+//            alipaymentResponse.setMsg(PayReturnCodeEnum.GET_CODE_FALIED.getMsg());
+//            return alipaymentResponse;
+//        }
+//
+//        Payment payment = generatePayment(request);
+//        alipaymentResponse.setQrCode(code);
+//        try {
+//            paymentMapper.insert(payment);
+//        } catch (Exception e) {
+//            log.error("PayCoreServiceImpl.aliPay occurs error: " + e);
+//            ExceptionProcessorUtils.wrapperHandlerException(alipaymentResponse, e);
+//        }
+//        return alipaymentResponse;
 
     }
 
+    @Override
+    public AlipayQueryRetResponse queryAlipayRet(PaymentRequest request) {
+        return null;
+    }
+
     private Payment generatePayment(PaymentRequest request) {
+        /**
+         * Payment的id可以不指定，其他的如果表结构中是not null， 则必须要指定
+         */
         Payment payment = new Payment();
         payment.setCreateTime(new Date());
         payment.setOrderId(request.getTradeNo());
         BigDecimal orderFee = request.getOrderFee();
         payment.setOrderAmount(orderFee);
         payment.setPayerAmount(orderFee);
-        payment.setPayWay("支付宝");
         payment.setProductName(request.getSubject());
         payment.setPayWay(request.getPayChannel());
         payment.setPayerUid(request.getUserId());
-        payment.setPayerName("徐凤年");
+        payment.setPayerName("xxx");
         payment.setStatus(PaymentConstants.PayStatusEnum.INIT_STATUS.getStatus() + "");
         payment.setRemark("支付宝支付");
         payment.setUpdateTime(new Date());
         return payment;
     }
 
-    @Override
+/*    @Override
     public AlipayQueryRetResponse queryAlipayRet(PaymentRequest request) {
 
         AlipayQueryRetResponse alipayQueryRetResponse = new AlipayQueryRetResponse();
@@ -138,5 +157,5 @@ public class PayCoreServiceImpl implements PayCoreService {
             ExceptionProcessorUtils.wrapperHandlerException(alipayQueryRetResponse, e);
         }
         return alipayQueryRetResponse;
-    }
+    }*/
 }

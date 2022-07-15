@@ -109,15 +109,15 @@ public class WechatPayment {
 			if ("SUCCESS".equals(resultMap.get("result_code"))) {
 				response.setPrepayId(resultMap.get("prepay_id"));
 				response.setCodeUrl(resultMap.get("code_url"));
-				response.setCode(PayReturnCodeEnum.SUCCESS.getCode());
+				response.setCode(PayReturnCodeEnum.SUCCESS.getQrCode());
 				response.setMsg(PayReturnCodeEnum.SUCCESS.getMsg());
 			} else {
 				String errMsg = resultMap.get("err_code") + ":" + resultMap.get("err_code_des");
-				response.setCode(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getCode());
+				response.setCode(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getQrCode());
 				response.setMsg(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getMsg(errMsg));
 			}
 		} else {
-			response.setCode(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getCode());
+			response.setCode(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getQrCode());
 			response.setMsg(PayReturnCodeEnum.PAYMENT_PROCESSOR_FAILED.getMsg(resultMap.get("return_msg")));
 		}
 		return response;
@@ -138,7 +138,7 @@ public class WechatPayment {
 		payment.setPayerName("ciggar");//TODO
 		payment.setPayWay(paymentRequest.getPayChannel());
 		payment.setProductName(paymentRequest.getSubject());
-		payment.setStatus(PayResultEnum.TRADE_PROCESSING.getCode());//
+		payment.setStatus(PayResultEnum.TRADE_PROCESSING.getQrCode());//
 		payment.setRemark("微信支付");
 		payment.setPayNo(respond.getPrepayId());//第三方的交易id
 		payment.setUpdateTime(new Date());
@@ -172,7 +172,7 @@ public class WechatPayment {
 				if ("SUCCESS".equals(paraMap.get("result_code"))) {
 					//更新支付表
 					Payment payment = new Payment();
-					payment.setStatus(PayResultEnum.TRADE_SUCCESS.getCode());
+					payment.setStatus(PayResultEnum.TRADE_SUCCESS.getQrCode());
 					payment.setPaySuccessTime((UtilDate.parseStrToDate(UtilDate.simple,paraMap.get("time_end").toString(),new Date())));
 					Example example = new Example(Payment.class);
 					example.createCriteria().andEqualTo("orderId", paraMap.get("out_trade_no"));

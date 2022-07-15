@@ -1,6 +1,8 @@
 package com.mall.pay.dto;
 
 import com.mall.commons.result.AbstractRequest;
+import com.mall.commons.tool.exception.ValidateException;
+import com.mall.pay.constants.PayReturnCodeEnum;
 import com.mall.pay.validatorextend.PayChannel;
 import lombok.Data;
 
@@ -62,7 +64,9 @@ public class PaymentRequest extends AbstractRequest{
 
     @Override
     public void requestCheck() {
-
+        if (totalFee == null || payChannel == null || tradeNo == null) {
+            throw new ValidateException(PayReturnCodeEnum.REQUISITE_PARAMETER_NOT_EXIST.getCode(), PayReturnCodeEnum.REQUISITE_PARAMETER_NOT_EXIST.getMsg());
+        }
     }
 
     public String getSubject() {

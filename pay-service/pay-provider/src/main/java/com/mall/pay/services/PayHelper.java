@@ -71,7 +71,7 @@ public class PayHelper extends Main {
          获取支付二维码
          测试当面付2.0生成支付二维码
      */
-    public String getCode(PaymentRequest request) {
+    public String getQrCode(PaymentRequest request) {
         // (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
         // 需保证商户系统端不能重复，建议通过数据库sequence生成，
         String outTradeNo = request.getTradeNo();
@@ -155,7 +155,6 @@ public class PayHelper extends Main {
                 log.error("不支持的交易状态，交易返回异常!!!");
                 break;
         }
-
         return null;
     }
 

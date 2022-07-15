@@ -84,7 +84,7 @@ package com.mall.pay.biz.payment;//package com.mall.pay.biz.payment;
 //		String strPara = AlipayBuildRequest.buildRequest(sPara, "get", "确认", aliPaymentConfig);
 //		log.info("支付宝支付同步返回的表单:{}",strPara);
 //		AlipaymentResponse response = new AlipaymentResponse();
-//		response.setCode(PayReturnCodeEnum.SUCCESS.getCode());
+//		response.setCode(PayReturnCodeEnum.SUCCESS.getQrCode());
 //		response.setMsg(PayReturnCodeEnum.SUCCESS.getMsg());
 //		response.setQrCode(strPara);
 //		return response;
@@ -107,7 +107,7 @@ package com.mall.pay.biz.payment;//package com.mall.pay.biz.payment;
 //		payment.setPayerName("");//TODO
 //		payment.setPayWay(paymentRequest.getPayChannel());
 //		payment.setProductName(paymentRequest.getSubject());
-//		payment.setStatus(PayResultEnum.TRADE_PROCESSING.getCode());//
+//		payment.setStatus(PayResultEnum.TRADE_PROCESSING.getQrCode());//
 //		payment.setRemark("支付宝支付");
 //		payment.setUpdateTime(new Date());
 //		paymentMapper.insert(payment);
@@ -139,7 +139,7 @@ package com.mall.pay.biz.payment;//package com.mall.pay.biz.payment;
 //			if ("TRADE_SUCCESS".equals(tradeStatus)) {
 //				//更新支付表
 //				payment.setPayNo(params.get("trade_no").toString());
-//				payment.setStatus(PayResultEnum.TRADE_SUCCESS.getCode());
+//				payment.setStatus(PayResultEnum.TRADE_SUCCESS.getQrCode());
 //				payment.setPaySuccessTime((Date) params.get("gmt_payment"));
 //				Example example=new Example(Payment.class);
 //				example.createCriteria().andEqualTo("orderId",orderId);
@@ -149,13 +149,13 @@ package com.mall.pay.biz.payment;//package com.mall.pay.biz.payment;
 //				response.setResult("success");
 //				return response;
 //			} else if ("TRADE_FINISH".equals(tradeStatus)) {
-//				payment.setStatus(PayResultEnum.TRADE_FINISHED.getCode());
+//				payment.setStatus(PayResultEnum.TRADE_FINISHED.getQrCode());
 //				paymentMapper.updateByExampleSelective(payment, orderId);
 //				//更新订单表状态
 //				orderCoreService.updateOrder(1, orderId);
 //				response.setResult("success");
 //			} else if ("FAIL".equals(tradeStatus)) {
-//				payment.setStatus(PayResultEnum.FAIL.getCode());
+//				payment.setStatus(PayResultEnum.FAIL.getQrCode());
 //				paymentMapper.updateByExampleSelective(payment, orderId);
 //				response.setResult("success");
 //			} else {
