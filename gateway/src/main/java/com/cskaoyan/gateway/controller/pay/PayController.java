@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.ref.ReferenceQueue;
 
 /**
  * @description:
@@ -47,7 +46,8 @@ public class PayController {
         request.setOrderFee(payForm.getMoney());
         request.setTradeNo(payForm.getOrderId());
         request.setPayChannel(payForm.getPayType());
-        request.setSubject(payForm.getNickName() + " " + payForm.getInfo());
+        request.setPayerName(payForm.getNickName());
+        request.setSubject(payForm.getInfo());
         AlipaymentResponse response = payCoreService.aliPay(request);
         if (PayReturnCodeEnum.SUCCESS.getCode().equals(response.getCode())) {
             String qrCode = response.getQrCode();
@@ -64,10 +64,12 @@ public class PayController {
         PaymentRequest request = new PaymentRequest();
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
         request.setUserId(uid);
+        request.setTradeNo(orderId);
         AlipayQueryRetResponse response = payCoreService.queryAlipayRet(request);
         if (PayReturnCodeEnum.SUCCESS.getCode().equals(response.getCode())) {
-
+            return new ResponseUtil<>().setData(response.getMsg());
         }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 
     public static void main(String[] args) {

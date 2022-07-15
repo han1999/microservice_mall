@@ -2,6 +2,9 @@ package com.mall.pay.services;
 
 import com.mall.order.OrderCoreService;
 import com.mall.order.OrderQueryService;
+import com.mall.order.constant.OrderRetCode;
+import com.mall.order.dto.PayOrderSuccessRequest;
+import com.mall.order.dto.PayOrderSuccessResponse;
 import com.mall.pay.PayCoreService;
 import com.mall.pay.biz.payment.constants.PaymentConstants;
 import com.mall.pay.constants.PayReturnCodeEnum;
@@ -16,17 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 
 @Slf4j
-@Service(cluster = "failover",timeout = 2000)
+@Service(cluster = "failover", timeout = 2000)
 public class PayCoreServiceImpl implements PayCoreService {
 
     @Autowired
-    PayHelper helper;
+    PayHelper payHelper;
 
     @Autowired
     PaymentMapper paymentMapper;
@@ -42,7 +46,7 @@ public class PayCoreServiceImpl implements PayCoreService {
         AlipaymentResponse response = new AlipaymentResponse();
         try {
             request.requestCheck();
-            String qrCode = helper.getQrCode(request);
+            String qrCode = payHelper.getQrCode(request);
             if (qrCode == null) {
                 return ResponseUtils.setCodeAndMsg(response, PayReturnCodeEnum.GET_CODE_FALIED);
             }
@@ -62,7 +66,7 @@ public class PayCoreServiceImpl implements PayCoreService {
 //        alipaymentResponse.setCode(PayReturnCodeEnum.SUCCESS.getQrCode());
 //        alipaymentResponse.setMsg(PayReturnCodeEnum.SUCCESS.getMsg());
 //
-//        String code = helper.getQrCode(request);
+//        String code = payHelper.getQrCode(request);
 //        if (code == null) {
 //          // 获取二维码失败
 //            alipaymentResponse.setCode(PayReturnCodeEnum.GET_CODE_FALIED.getQrCode());
@@ -84,7 +88,52 @@ public class PayCoreServiceImpl implements PayCoreService {
 
     @Override
     public AlipayQueryRetResponse queryAlipayRet(PaymentRequest request) {
-        return null;
+        AlipayQueryRetResponse response = new AlipayQueryRetResponse();
+        try {
+            request.requestCheck();
+            boolean paySuccess = payHelper.test_trade_query(request);
+
+            if (paySuccess) {
+            /*    Example example = new Example(Payment.class);
+                example.createCriteria().andEqualTo("orderId", request.getTradeNo());
+                List<Payment> payments = paymentMapper.selectByExample(example);
+                Payment payment = payments.get(0);*/
+                /**
+                 * 修改tb_payment
+                 */
+                Payment payment = new Payment();
+                payment.setOrderId(request.getTradeNo());
+                payment.setPayerUid(request.getUserId());
+                payment.setUpdateTime(new Date());
+                payment.setPaySuccessTime(new Date());
+                payment.setCompleteTime(new Date());
+                payment.setStatus(PaymentConstants.PayStatusEnum.PAY_SUCCESS.getStatus() + "");
+                Example example = new Example(Payment.class);
+                example.createCriteria().andEqualTo("orderId", request.getTradeNo());
+                paymentMapper.updateByExampleSelective(payment, example);
+
+                /**
+                 * 修改tb_order
+                 */
+                PayOrderSuccessRequest payOrderSuccessRequest = new PayOrderSuccessRequest();
+                payOrderSuccessRequest.setOrderId(request.getTradeNo());
+                /**
+                 * status状态的改变，让order_provider来做
+                 */
+                PayOrderSuccessResponse payOrderSuccessResponse = orderCoreService.payOrderSuccess(payOrderSuccessRequest);
+                if (OrderRetCode.SUCCESS.getCode().equals(payOrderSuccessResponse.getCode())) {
+                    return ResponseUtils.setCodeAndMsg(response, PayReturnCodeEnum.SUCCESS);
+                }
+            }
+            /**
+             * 支付失败，其实什么都不要做，因为订单的状态0,1分别是初始状态，已支付状态，没有支付失败这个选项
+             */
+            return ResponseUtils.setCodeAndMsg(response, PayReturnCodeEnum.ORDER_HAD_NOT_PAY);
+        } catch (Exception e) {
+            log.error("PayCoreServiceImpl.queryAlipayRet occurs Exception :" + e);
+            ExceptionProcessorUtils.wrapperHandlerException(response, e);
+        }
+        return response;
     }
 
     private Payment generatePayment(PaymentRequest request) {
@@ -100,7 +149,7 @@ public class PayCoreServiceImpl implements PayCoreService {
         payment.setProductName(request.getSubject());
         payment.setPayWay(request.getPayChannel());
         payment.setPayerUid(request.getUserId());
-        payment.setPayerName("xxx");
+        payment.setPayerName(request.getPayerName());
         payment.setStatus(PaymentConstants.PayStatusEnum.INIT_STATUS.getStatus() + "");
         payment.setRemark("支付宝支付");
         payment.setUpdateTime(new Date());
@@ -125,7 +174,7 @@ public class PayCoreServiceImpl implements PayCoreService {
             if (PaymentConstants.PayStatusEnum.PAY_SUCCESS.getStatus().toString().equals(payment1.getStatus())) {
                 return alipayQueryRetResponse;
             }
-            helper.queryTrade(request, payStatus -> {
+            payHelper.queryTrade(request, payStatus -> {
                 Example example = new Example(Payment.class);
                 example.createCriteria().andEqualTo("orderId", request.getTradeNo());
                 Payment payment = new Payment();

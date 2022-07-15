@@ -22,4 +22,8 @@ public interface OrderCoreService {
     DeleteOrderResponse deleteOrder(DeleteOrderRequest request);
 
     CancelOrderResponse cancelOrder(CancelOrderRequest request);
+
+    PayOrderSuccessResponse payOrderSuccess(PayOrderSuccessRequest request);
+
+    PayOrderFailResponse payOrderFail(PayOrderFailRequest request);
 }

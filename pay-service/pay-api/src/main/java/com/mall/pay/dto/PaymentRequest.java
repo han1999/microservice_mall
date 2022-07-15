@@ -21,6 +21,8 @@ public class PaymentRequest extends AbstractRequest{
     @NotNull(message = "userId不可为空")
     private Long userId;
 
+    private String payerName;
+
     /**
      * 交易订单号, 统一生成全局唯一的订单号
      */
@@ -64,7 +66,7 @@ public class PaymentRequest extends AbstractRequest{
 
     @Override
     public void requestCheck() {
-        if (totalFee == null || payChannel == null || tradeNo == null) {
+        if (userId==null || tradeNo==null) {
             throw new ValidateException(PayReturnCodeEnum.REQUISITE_PARAMETER_NOT_EXIST.getCode(), PayReturnCodeEnum.REQUISITE_PARAMETER_NOT_EXIST.getMsg());
         }
     }

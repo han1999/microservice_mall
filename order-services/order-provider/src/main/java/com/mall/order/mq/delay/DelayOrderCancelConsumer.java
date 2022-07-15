@@ -63,11 +63,11 @@ public class DelayOrderCancelConsumer {
                     DeleteOrderRequest request = new DeleteOrderRequest();
                     request.setOrderId(orderId);
                     DeleteOrderResponse response = orderCoreService.deleteOrder(request);
-                    if (OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
-                        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                    if (!OrderRetCode.SUCCESS.getCode().equals(response.getCode())) {
+                        return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                     }
                 }
-                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
         try {
