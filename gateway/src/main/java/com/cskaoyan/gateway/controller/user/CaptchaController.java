@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/user")
 public class CaptchaController {
 
-    @Reference(timeout = 3000, check = false)
+    @Reference(timeout = 3000, retries = 0, check = false)
     IKaptchaService kaptchaService;
 
     /**

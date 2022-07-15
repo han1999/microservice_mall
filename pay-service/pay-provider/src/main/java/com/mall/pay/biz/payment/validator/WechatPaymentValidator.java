@@ -15,6 +15,6 @@ public class WechatPaymentValidator extends BaseValidator {
 
     @Override
     public void specialValidate(AbstractRequest request) {
-        commonValidate(request,orderQueryService);
+//        commonValidate(request,orderQueryService);
     }
 }

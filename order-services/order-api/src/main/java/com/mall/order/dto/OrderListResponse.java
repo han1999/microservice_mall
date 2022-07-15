@@ -11,7 +11,8 @@ import java.util.List;
 @Data
 public class OrderListResponse extends AbstractResponse{
 
-    private List<OrderDetailInfo> detailInfoList;
+    private List<OrderDetailInfo> data;
+//    private List<OrderDetailInfo> detailInfoList;
 
     /**
      * 总记录数

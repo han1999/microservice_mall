@@ -5,6 +5,7 @@ import com.mall.order.dal.entitys.OrderItem;
 import com.mall.order.dal.entitys.OrderShipping;
 import com.mall.order.dto.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 import java.util.List;
@@ -21,18 +22,25 @@ public interface OrderConverter {
     @Mappings({})
     OrderDetailInfo order2detail(Order order);
 
-    @Mappings({})
+//    List<OrderDetailInfo> orders2Details(List<Order> orderList);
+
+    @Mappings({
+            @Mapping(source = "status", target = "orderStatus")
+    })
     OrderItemDto item2dto(OrderItem item);
 
     @Mappings({})
     OrderShippingDto shipping2dto(OrderShipping shipping);
 
 
-    List<OrderItemDto> item2dto(List<OrderItem> items);
+    List<OrderItemDto> items2dtos(List<OrderItem> items);
 
     @Mappings({})
     OrderItemResponse item2res(OrderItem orderItem);
 
     @Mappings({})
     OrderDto order2dto(Order order);
+
+    @Mappings({})
+    List<OrderDto> orders2Dtos(List<Order> orderList);
 }

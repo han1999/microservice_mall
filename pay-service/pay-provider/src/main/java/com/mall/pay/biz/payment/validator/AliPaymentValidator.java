@@ -14,6 +14,6 @@ public class AliPaymentValidator extends BaseValidator {
 
 	@Override
 	public void specialValidate(AbstractRequest request) {
-       super.commonValidate(request,orderQueryService);
+//       super.commonValidate(request,orderQueryService);
 	}
 }

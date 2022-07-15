@@ -16,8 +16,8 @@
     <module>../order-services</module>
     <module>../shopping-service</module>
     <module>../user-service</module>
-    <!--<module>../pay-service</module>-->
-    <!--<module>../promotion-service</module>-->
+    <module>../pay-service</module>
+    <module>../promotion-service</module>
   </modules>
 
   <properties>

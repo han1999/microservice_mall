@@ -1,5 +1,6 @@
 package com.mall.pay.services;
 
+import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.TradeFundBill;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -19,6 +20,7 @@ import com.mall.pay.alipay.service.impl.AlipayTradeWithHBServiceImpl;
 import com.mall.pay.alipay.utils.Utils;
 import com.mall.pay.alipay.utils.ZxingUtils;
 import com.mall.pay.dto.PaymentRequest;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +28,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Component
-public class PayHelper extends Main {
+public class PayHelper{
     private static Log log = LogFactory.getLog(Main.class);
 
     // 支付宝当面付2.0服务
@@ -40,9 +41,6 @@ public class PayHelper extends Main {
 
     // 支付宝交易保障接口服务，供测试接口api使用，请先阅读readme.txt
     private static AlipayMonitorService monitorService;
-    @Value("${alipay.code.path}")
-    private String codePath;
-
 
     static {
         /** 一定要在创建AlipayTradeService之前调用Configs.init()设置默认参数
@@ -65,13 +63,13 @@ public class PayHelper extends Main {
     }
 
     @Value("${alipay.code.path}")
-    String codeDir;
+    private String codePath;
 
     /*
          获取支付二维码
          测试当面付2.0生成支付二维码
      */
-    public String getCode(PaymentRequest request) {
+    public String getQrCode(PaymentRequest request) {
         // (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
         // 需保证商户系统端不能重复，建议通过数据库sequence生成，
         String outTradeNo = request.getTradeNo();
@@ -155,16 +153,24 @@ public class PayHelper extends Main {
                 log.error("不支持的交易状态，交易返回异常!!!");
                 break;
         }
-
         return null;
     }
 
-    /*
-            测试当面付2.0查询订单
-      */
-    public boolean queryTrade(PaymentRequest request, Consumer<Boolean> successAction) {
+    // 简单打印应答
+    private void dumpResponse(AlipayResponse response) {
+        if (response != null) {
+            log.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
+            if (StringUtils.isNotEmpty(response.getSubCode())) {
+                log.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(),
+                        response.getSubMsg()));
+            }
+            log.info("body:" + response.getBody());
+        }
+    }
 
 
+    // 测试当面付2.0查询订单
+    public boolean test_trade_query(PaymentRequest request) {
         // (必填) 商户订单号，通过此商户订单号查询当面付的交易状态
         String outTradeNo = request.getTradeNo();
 
@@ -178,10 +184,7 @@ public class PayHelper extends Main {
                 log.info("查询返回该订单支付成功: )");
 
                 AlipayTradeQueryResponse response = result.getResponse();
-
-                // 支付成功则修改支付状态和订单状态
-                // TODO 支付成功之后，不要修改库存？
-                successAction.accept(true);
+                dumpResponse(response);
 
                 log.info(response.getTradeStatus());
                 if (Utils.isListNotEmpty(response.getFundBillList())) {
@@ -190,9 +193,7 @@ public class PayHelper extends Main {
                     }
                 }
                 return true;
-
             case FAILED:
-                successAction.accept(false);
                 log.error("查询返回该订单支付失败或被关闭!!!");
                 break;
 
@@ -204,7 +205,6 @@ public class PayHelper extends Main {
                 log.error("不支持的交易状态，交易返回异常!!!");
                 break;
         }
-
         return false;
     }
 }

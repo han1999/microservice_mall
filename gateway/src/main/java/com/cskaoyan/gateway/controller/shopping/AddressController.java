@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/shopping")
 public class AddressController {
 
-    @Reference(timeout = 3000,retries = 2, check = false)
+    @Reference(timeout = 3000,retries = 0, check = false)
     IAddressService addressService;
 
     /**
