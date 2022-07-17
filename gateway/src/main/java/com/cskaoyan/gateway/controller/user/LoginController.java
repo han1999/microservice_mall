@@ -61,7 +61,7 @@ public class LoginController {
              * maxAge==0 删除 cookie （没有其他删除客户端保存的cookie的方法)
              * maxAge<0 浏览器关闭后，删除cookie，cookie不持久化保存，只存在于浏览器内存中
              */
-            Cookie cookie = CookieUtil.genCookie(TokenIntercepter.ACCESS_TOKEN, response.getToken(), "/", -1);
+            Cookie cookie = CookieUtil.genCookie(TokenIntercepter.ACCESS_TOKEN, response.getToken(), "/", 3600*24);
             cookie.setHttpOnly(true);
             httpServletResponse.addCookie(cookie);
             return new ResponseUtil<>().setData(response);

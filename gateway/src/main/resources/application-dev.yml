@@ -16,9 +16,9 @@ dubbo:
   scan:
     base-packages: com.cskaoyan.gateway
 captchaFlag : false
-logging:
-  level:
-    root: debug
+#logging:
+#  level:
+#    root: debug
 spring:
   resources:
     static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\qrcode\

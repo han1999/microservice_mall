@@ -1,7 +1,6 @@
 package com.mall.promo.service;
 
 import com.mall.commons.lock.DistributedLockException;
-import com.mall.commons.lock.impl.zk.ZkMutexDistributedLock;
 import com.mall.order.OrderPromoService;
 import com.mall.order.dto.CreateSeckillOrderRequest;
 import com.mall.order.dto.CreateSeckillOrderResponse;
@@ -23,8 +22,6 @@ import com.mall.shopping.dto.ProductDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
-import org.apache.zookeeper.ZKUtil;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +47,15 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
     @Autowired
     PromoItemMapper promoItemMapper;
 
-    @Reference(check = false)
+    @Reference(retries =0, timeout = 3000, check = false)
     IProductService productService;
 
     @Autowired
     PromoInfoConverter promoInfoConverter;
 
-    @Reference(check = false)
+    @Reference(retries = 0, timeout = 3000, check = false)
     OrderPromoService orderPromoService;
+
     @Autowired
     PromoProductConverter promoProductConverter;
 
@@ -77,8 +74,6 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
     @Override
     public PromoInfoResponse getPromoList(PromoInfoRequest request) {
         PromoInfoResponse response = new PromoInfoResponse();
-
-
         try {
             request.requestCheck();
 
@@ -253,7 +248,7 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
     }
 
     @Override
-    public PromoProductDetailResponse getPromoProductProduct(PromoProductDetailRequest request) {
+    public PromoProductDetailResponse getPromoProductDetail(PromoProductDetailRequest request) {
 
         PromoProductDetailResponse promoProductDetailResponse = new PromoProductDetailResponse();
 
@@ -273,7 +268,7 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
                 return promoProductDetailResponse;
             }
         } catch (Exception e) {
-            log.error("PromoServiceImpl.getPromoProductProduct occurs error");
+            log.error("PromoServiceImpl.getPromoProductDetail occurs error");
             promoProductDetailResponse.setCode(PromoRetCode.SYSTEM_ERROR.getCode());
             promoProductDetailResponse.setMsg(PromoRetCode.SYSTEM_ERROR.getMessage());
             return promoProductDetailResponse;
