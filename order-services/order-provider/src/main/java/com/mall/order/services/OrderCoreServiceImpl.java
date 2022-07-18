@@ -162,6 +162,13 @@ public class OrderCoreServiceImpl implements OrderCoreService {
         return response;
     }
 
+    /**
+     * 删除有点复杂，因为秒杀订单和普通订单，是两个不同的库存，要将他们区分开
+     * 这里我用unique_key来区分不同类型的订单
+     * 秒杀订单是promo_order 普通订单是null
+     * @param request
+     * @return
+     */
     @Override
     public DeleteOrderResponse deleteOrder(DeleteOrderRequest request) {
         /**
@@ -178,21 +185,31 @@ public class OrderCoreServiceImpl implements OrderCoreService {
             request.requestCheck();
             String orderId = request.getOrderId();
             int orderShippingDelete = orderShippingMapper.deleteByPrimaryKey(orderId);
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            String uniqueKey = order.getUniqueKey();
+            boolean isSeckillOrder = "seckill_order".equals(uniqueKey);
+            log.info("isSeckillOrder:{}", isSeckillOrder);
             /**
              * 通过orderItem对stock进行更改
              */
-            List<OrderItem> orderItems = orderItemMapper.queryByOrderId(orderId);
-            for (OrderItem orderItem : orderItems) {
-                Long itemId = orderItem.getItemId();
-                Integer num = orderItem.getNum();
+            /**
+             * 秒杀业务没有办法恢复库存，因为没有办法标志promo_item唯一id
+             * 秒杀业务取消订单以后，库存不恢复
+             */
+            if (!isSeckillOrder) {
+                List<OrderItem> orderItems = orderItemMapper.queryByOrderId(orderId);
+                for (OrderItem orderItem : orderItems) {
+                    Long itemId = orderItem.getItemId();
+                    Integer num = orderItem.getNum();
 
-                Stock stock = new Stock();
-                stock.setItemId(itemId);
-                stock.setLockCount(-num);
-                stock.setStockCount(num.longValue());
-                int stockUpdate = stockMapper.updateStock(stock);
-                if (stockUpdate == 0) {
-                    return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_SAVE_EXCEPTION);
+                    Stock stock = new Stock();
+                    stock.setItemId(itemId);
+                    stock.setLockCount(-num);
+                    stock.setStockCount(num.longValue());
+                    int stockUpdate = stockMapper.updateStock(stock);
+                    if (stockUpdate == 0) {
+                        return ResponseUtils.setCodeAndMsg(response, OrderRetCode.DB_SAVE_EXCEPTION);
+                    }
                 }
             }
             Example orderItemExample = new Example(OrderItem.class);

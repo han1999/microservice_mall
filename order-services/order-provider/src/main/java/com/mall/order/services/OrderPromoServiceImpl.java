@@ -80,6 +80,10 @@ public class OrderPromoServiceImpl implements OrderPromoService {
         createOrderContext.setAddressId(request.getAddressId());
         createOrderContext.setCartProductDtoList(list);
         createOrderContext.setOrderTotal(request.getPrice());
+        /**
+         * 对原项目的改进，unique_key标志是否是秒杀服务订单，两种订单在删除的时候不一样（两个库存）
+         */
+        createOrderContext.setUniqueKey("seckill_order");
     }
 
     private List<CartProductDto> getCartProductList(CreateSeckillOrderRequest request) {

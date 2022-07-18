@@ -36,4 +36,5 @@ public interface PromoService {
       * @return
       */
     PromoProductDetailResponse getPromoProductDetail(PromoProductDetailRequest request);
+
 }
