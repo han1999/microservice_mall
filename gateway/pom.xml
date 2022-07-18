@@ -59,6 +59,12 @@
             <version>1.0-SNAPSHOT</version>
             <artifactId>commons-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.mall.commons</groupId>
+            <artifactId>commons-tool</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--<dependency>-->
         <!--<groupId>com.spring4all</groupId>-->
         <!--<artifactId>swagger-spring-boot-starter</artifactId>-->
@@ -100,6 +106,12 @@
             <artifactId>promotion-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.mall.promotion</groupId>-->
+            <!--<artifactId>promotion-provider</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.mall.user</groupId>

@@ -79,9 +79,11 @@ public class MQTransactionProducer {
                 try {
                     int effectiveRow = promoItemMapper.decreaseStock(productId, psId);
                     String key = "promo_order_id_"  + message.getTransactionId();
+                    String promoStockKey = "promo_order_stock_not_enough_" + productId + "_" + psId;
                     if (effectiveRow < 1) {
                         String value = "fail";
                         cacheManager.setCache(key,value,1);
+                        cacheManager.setCache(promoStockKey, "none", 1);
                         return LocalTransactionState.ROLLBACK_MESSAGE;
                     }
                     String value = "success";

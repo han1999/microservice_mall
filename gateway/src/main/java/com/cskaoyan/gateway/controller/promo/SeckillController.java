@@ -31,6 +31,16 @@ public class SeckillController {
     @Reference(timeout = 3000, retries = 0, check = false)
     PromoService promoService;
 
+    /*
+    解决不好这里的cacheManager的注入问题
+     */
+//    CacheManager cacheManager;
+//
+//    @PostConstruct
+//    public void init() {
+//        cacheManager = new CacheManager();
+//    }
+
     @GetMapping("seckilllist")
     @Anonymous
     public ResponseData seckillList(int sessionId) {
@@ -56,6 +66,12 @@ public class SeckillController {
 
     @PostMapping("seckill")
     public ResponseData seckill(@RequestBody CreatePromoOrderRequest request, HttpServletRequest httpServletRequest) throws DistributedLockException {
+//        Long productId = request.getProductId();
+//        Long psId = request.getPsId();
+//        String notEnoughKey = cacheManager.checkCache("promo_order_stock_not_enough_" + productId + "_" + psId);
+//        if (notEnoughKey != null && "none".equals(notEnoughKey.trim())) {
+//            return new ResponseUtil<>().setErrorMsg("失败");
+//        }
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
         request.setUserId(uid);
         CreatePromoOrderResponse response = promoService.createPromoOrderInTransaction(request);
