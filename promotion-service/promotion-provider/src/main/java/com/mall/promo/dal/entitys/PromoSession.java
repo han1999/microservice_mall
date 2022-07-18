@@ -2,7 +2,9 @@ package com.mall.promo.dal.entitys;
 
 import lombok.Data;
 import lombok.ToString;
+import tk.mybatis.mapper.annotation.KeySql;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -16,6 +18,8 @@ import java.util.Date;
 @ToString
 public class PromoSession {
 
+    @Id
+    @KeySql(useGeneratedKeys = true)
     private Long id;
 
     // 场次id 1:上午十点场 2：下午四点场

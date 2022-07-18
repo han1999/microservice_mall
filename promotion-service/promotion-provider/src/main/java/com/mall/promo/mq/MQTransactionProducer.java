@@ -32,8 +32,12 @@ public class MQTransactionProducer {
 
     @Value("${mq.nameserver.addr}")
     private String addr;
-    @Value("${mq.topicname}")
+
+    @Value("${mq.topic-name}")
     private String topic;
+
+    @Value("${mq.producer.group}")
+    private String producerGroup;
 
     private TransactionMQProducer transactionMQProducer;
 
@@ -48,7 +52,7 @@ public class MQTransactionProducer {
 
     @PostConstruct
     public void init() {
-        transactionMQProducer = new TransactionMQProducer("promo_group");
+        transactionMQProducer = new TransactionMQProducer(producerGroup);
         transactionMQProducer.setNamesrvAddr(addr);
 
 

@@ -38,5 +38,10 @@ dubbo:
     base-packages: com.mall.promo.service
 mq:
   nameserver:
-    addr: 192.168.56.105:9876
-  topicname: promo_order
+    addr: localhost:9876
+  topic-name: promo_order
+  producer:
+    group: promo_order_producer
+logging:
+  level:
+    root: debug

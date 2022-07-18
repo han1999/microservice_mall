@@ -1,5 +1,6 @@
 package com.cskaoyan.gateway.controller.promo;
 
+import com.mall.commons.lock.DistributedLockException;
 import com.mall.commons.result.ResponseData;
 import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.utils.RequestUtils;
@@ -54,10 +55,10 @@ public class SeckillController {
     }
 
     @PostMapping("seckill")
-    public ResponseData seckill(@RequestBody CreatePromoOrderRequest request, HttpServletRequest httpServletRequest) {
+    public ResponseData seckill(@RequestBody CreatePromoOrderRequest request, HttpServletRequest httpServletRequest) throws DistributedLockException {
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
         request.setUserId(uid);
-        CreatePromoOrderResponse response = promoService.createPromoOrder(request);
+        CreatePromoOrderResponse response = promoService.createPromoOrderInTransaction(request);
         if (PromoRetCode.SUCCESS.getCode().equals(response.getCode())) {
             return new ResponseUtil<>().setData(response.getProductId());
         }

@@ -54,3 +54,10 @@ logging:
     classpath: logback.xml
   level:
     root: debug
+
+mq:
+  consumer:
+    group: promo_order_consumer
+  nameserver:
+    addr: localhost:9876
+  topic-name: promo_order

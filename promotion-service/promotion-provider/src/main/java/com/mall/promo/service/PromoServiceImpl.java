@@ -31,7 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +51,7 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
     @Autowired
     PromoItemMapper promoItemMapper;
 
-    @Reference(retries =0, timeout = 3000, check = false)
+    @Reference(retries = 0, timeout = 3000, check = false)
     IProductService productService;
 
     @Autowired
@@ -88,9 +92,58 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
 
             if (CollectionUtils.isEmpty(sessionList)) {
                 // 如果没找到秒杀场次
-                response.setCode(PromoRetCode.PROMO_NOT_EXIST.getCode());
-                response.setMsg(PromoRetCode.PROMO_NOT_EXIST.getMessage());
-                return response;
+//                response.setCode(PromoRetCode.PROMO_NOT_EXIST.getCode());
+//                response.setMsg(PromoRetCode.PROMO_NOT_EXIST.getMessage());
+//                return response;
+                /**
+                 * 如果没有找到秒杀场次，我们直接在数据库里面添加一个秒杀场次
+                 * 仅仅是demo， 不用于生产环境
+                 */
+                for (int i = 1; i <= 2; i++) {
+                    PromoSession promoSession = new PromoSession();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.add(calendar.HOUR_OF_DAY, (i - 1) * 6);
+                    promoSession.setStartTime(calendar.getTime());
+
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.HOUR_OF_DAY, 2+(i-1)*6);
+//                    log.info("timeAfter2hours:{}", timeAfter2Hours);
+                    promoSession.setEndTime(calendar.getTime());
+
+                    promoSession.setSessionId(i);
+                    promoSession.setYyyymmdd(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+                    int insert = sessionMapper.insert(promoSession);
+                    log.info("insert:{}",insert);
+
+                    /**
+                     * 主键可以为空，数据自增
+                     * start，endTime不能为空
+                     */
+                    PromoItem promoItem = new PromoItem();
+                    promoItem.setItemId(100023501L);
+                    promoItem.setItemStock(10);
+                    promoItem.setPsId(promoSession.getId());
+                    /**
+                     * 这里输出的ps_id还是null
+                     * 但是插入到数据库中的ps_id确实是正确的ps_id
+                     * 怀疑是有动态代理的东西，所以调试的时候看不出来ps_id
+                     */
+                    Integer ps_id = promoItem.getId();
+                    log.info("ps_id:{}", ps_id);
+                    promoItem.setSeckillPrice(new BigDecimal(30L));
+                    promoItemMapper.insert(promoItem);
+
+                    promoItem.setItemId(100052801L);
+                    promoItemMapper.insert(promoItem);
+
+                    promoItem.setItemId(100057501L);
+                    promoItemMapper.insert(promoItem);
+
+                    promoItem.setItemId(100047101L);
+                    promoItemMapper.insert(promoItem);
+                }
+                sessionList = sessionMapper.selectByExample(promoSessionExample);
             }
 
             PromoSession promoSession = sessionList.get(0);
