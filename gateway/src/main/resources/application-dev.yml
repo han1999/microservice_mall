@@ -21,7 +21,7 @@ captchaFlag : false
 #    root: debug
 spring:
   resources:
-    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\qrcode\
+    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
   redisson:
     address: 127.0.0.1:6379
     timeout: 3000
@@ -31,3 +31,5 @@ spring:
       max-idle: 10
       max-wait: 3000
       min-idle: 4
+
+

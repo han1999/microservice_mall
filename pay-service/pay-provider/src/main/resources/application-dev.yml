@@ -54,4 +54,4 @@ logging:
     classpath: logback.xml
 alipay:
   code:
-    path: C:\Users\hx\IdeaProjects\microservice_mall\qrcode\qr-%s.png
+    path: C:\Users\hx\IdeaProjects\microservice_mall\image\qr-%s.png

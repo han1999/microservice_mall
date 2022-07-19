@@ -1,4 +1,6 @@
 spring:
+  resources:
+    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/microservice_mall?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
@@ -69,3 +71,6 @@ logging:
   level:
     root: debug
 #  file: my.log
+# tomcat启动不了，不过没关系
+server:
+  port: 8080
