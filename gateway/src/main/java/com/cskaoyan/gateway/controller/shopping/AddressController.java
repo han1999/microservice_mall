@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
+ * 这tm相当坑爹，在controller里面，放在shopping下面，但是IAddressService实际上是用户服务的内容！！！！！
  */
 @Slf4j
 @RestController
@@ -90,7 +90,12 @@ public class AddressController {
         JSONObject object = JSON.parseObject(userInfo);
         Long uid = Long.parseLong(object.get("uid").toString());
         request.setAddressId(form.getAddressId());
-        request.setIsDefault(form.is_Default() ? 1 : null);
+        /**
+         * 写null简直是坑爹呀，后面马上就来个空指针异常了！！！！！
+         * 坑坑坑！！
+         */
+//        request.setIsDefault(form.is_Default() ? 1 : null);
+        request.setIsDefault(form.is_Default() ? 1 : 0);
         request.setStreetName(form.getStreetName());
         request.setTel(form.getTel());
         request.setUserId(uid);

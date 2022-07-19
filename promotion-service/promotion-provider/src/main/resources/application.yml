@@ -3,7 +3,7 @@ mybatis:
   type-aliases-package: com.mall.promo.dal.entitys
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/microservice_mall?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT+8
+    url: jdbc:mysql://127.0.0.1:3306/microservice_mall?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,5 +38,10 @@ dubbo:
     base-packages: com.mall.promo.service
 mq:
   nameserver:
-    addr: 192.168.56.105:9876
-  topicname: promo_order
+    addr: localhost:9876
+  topic-name: promo_order
+  producer:
+    group: promo_order_producer
+logging:
+  level:
+    root: debug

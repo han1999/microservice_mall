@@ -10,7 +10,6 @@ import com.mall.user.dto.*;
 import com.mall.user.utils.ExceptionProcessorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -91,12 +90,26 @@ public class AddressServiceImpl implements IAddressService {
         return response;
     }
 
+    public static void main(String[] args) {
+        Integer i = null;
+        /**
+         * 空指针异常！！！
+         */
+        boolean b = i == 1;
+        System.out.println("b = " + b);
+    }
+
+
     @Override
     public UpdateAddressResponse updateAddress(UpdateAddressRequest request) {
-        log.error("begin - AddressServiceImpl.updateAddress request :"+request);
+        log.info("begin - AddressServiceImpl.updateAddress request :"+request);
+        System.out.println("fuck!");
         UpdateAddressResponse response=new UpdateAddressResponse();
         try{
             request.requestCheck();
+            /**
+             * 这里存在空指针异常！！！！
+             */
             checkAddressDefaultUnique(request.getIsDefault()==1,request.getUserId());
             Address address=converter.req2Address(request);
             int row=addressMapper.updateByPrimaryKey(address);

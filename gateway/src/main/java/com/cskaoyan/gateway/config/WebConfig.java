@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     public TokenIntercepter tokenIntercepter(){
         return new TokenIntercepter();
     }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenIntercepter())
@@ -24,4 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
 //                .excludePathPatterns("/error");
         ;
     }
+
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/image/**").addResourceLocations("file:C:\\Users\\hx\\IdeaProjects\\microservice_mall\\image\\");
+//    }
 }

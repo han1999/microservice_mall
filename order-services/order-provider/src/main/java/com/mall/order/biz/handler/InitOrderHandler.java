@@ -56,6 +56,7 @@ public class InitOrderHandler extends AbstractTransHandler {
         order.setCreateTime(new Date());
         order.setUpdateTime(new Date());
         order.setStatus(OrderConstants.ORDER_STATUS_INIT);
+        order.setUniqueKey(createOrderContext.getUniqueKey());
         orderMapper.insert(order);
 
         List<CartProductDto> cartProductDtoList = createOrderContext.getCartProductDtoList();
