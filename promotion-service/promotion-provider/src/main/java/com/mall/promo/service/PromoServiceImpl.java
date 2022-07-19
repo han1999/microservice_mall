@@ -245,12 +245,12 @@ public class PromoServiceImpl implements PromoService, ApplicationContextAware {
     @Override
     public CreatePromoOrderResponse createPromoOrderInTransaction(CreatePromoOrderRequest request) throws DistributedLockException {
         CreatePromoOrderResponse response = new CreatePromoOrderResponse();
-        String notEnoughKey = cacheManager.checkCache("promo_order_stock_not_enough_" + request.getProductId() + "_" + request.getPsId());
-        if (notEnoughKey != null && "none".equals(notEnoughKey.trim())) {
-            response.setCode(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getCode());
-            response.setMsg(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getMessage());
-            return response;
-        }
+//        String notEnoughKey = cacheManager.checkCache("promo_order_stock_not_enough_" + request.getProductId() + "_" + request.getPsId());
+//        if (notEnoughKey != null && "none".equals(notEnoughKey.trim())) {
+//            response.setCode(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getCode());
+//            response.setMsg(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getMessage());
+//            return response;
+//        }
         // # issue 5 setCode调用了两次
         response.setCode(PromoRetCode.SUCCESS.getCode());
         response.setMsg(PromoRetCode.SUCCESS.getMessage());
