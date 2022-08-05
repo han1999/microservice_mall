@@ -32,7 +32,7 @@ public class VerifyController {
         request.setUuid(uid);
         UserVerifyResponse response = verifyService.verify(request);
         if (SysRetCodeConstants.SUCCESS.getCode().equals(response.getCode())) {
-            return new ResponseUtil<>().setData(null);
+            return new ResponseUtil<>().setData("验证成功，快去登录吧： http://118.178.135.74/#/login");
         }
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }

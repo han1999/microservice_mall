@@ -49,11 +49,11 @@ dubbo:
   scan:
     base-packages: com.mall.order.services
     # 具体的实现类
-logging:
-  config:
-    classpath: logback.xml
-  level:
-    root: debug
+#logging:
+#  config:
+#    classpath: logback.xml
+#  level:
+#    root: debug
 
 mq:
   consumer:

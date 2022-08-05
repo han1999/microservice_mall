@@ -37,6 +37,9 @@ public class PayController {
     @Value("${server.port}")
     String port;
 
+    @Value("${server.ip}")
+    String serverIp;
+
     @PostMapping("/pay")
     public ResponseData pay(@RequestBody PayForm payForm, HttpServletRequest httpServletRequest) {
         Long uid = RequestUtils.getStringAttributeJsonValue(httpServletRequest, TokenIntercepter.USER_INFO_KEY, "uid", Long.class);
@@ -52,7 +55,7 @@ public class PayController {
         if (PayReturnCodeEnum.SUCCESS.getCode().equals(response.getCode())) {
             String qrCode = response.getQrCode();
             log.info("port:{}", port);
-            String codeUrl = "http://localhost:" + port + "/image/" + qrCode;
+            String codeUrl = "http://"+serverIp+":" + port + "/image/" + qrCode;
             log.info("codeUrl:{}", codeUrl);
             return new ResponseUtil<>().setData(codeUrl);
         }

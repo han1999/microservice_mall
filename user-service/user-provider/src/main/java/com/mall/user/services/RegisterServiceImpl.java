@@ -15,6 +15,7 @@ import com.mall.user.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -46,6 +47,13 @@ public class RegisterServiceImpl implements IRegisterService {
     //考虑到这个是springframework里面的东西，可能是有一个配置类，已经注册过了
     @Autowired
     private JavaMailSender mailSender;
+
+    @Value("${email.verify.url}")
+    private String emailVerifyUrl;
+
+
+//    @PostConstruct
+//    public void
 
     @Override
     public UserRegisterResponse register(UserRegisterRequest request) {
@@ -128,7 +136,7 @@ public class RegisterServiceImpl implements IRegisterService {
         message.setTo(request.getEmail());
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("请点击下方链接，以验证注册：\n");
-        stringBuilder.append("http://localhost:8888/user/verify?uid=")
+        stringBuilder.append(emailVerifyUrl)
                 .append(uuid)
                 .append("&username=")
                 .append(request.getUserName());

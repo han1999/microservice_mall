@@ -7,4 +7,5 @@ spring:
     static-path-pattern: /image/**
 server:
   port: 8080
+  ip: 118.178.135.74
 

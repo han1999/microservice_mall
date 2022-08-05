@@ -45,8 +45,11 @@ public class MemberServiceImpl implements IMemberService {
     @Value("${spring.resources.static-locations}")
     private String imageLocation;
 
-    @Value("${server.port}")
-    private Integer serverPort;
+//    @Value("${server.port}")
+//    private Integer serverPort;
+
+    @Value("${image.filepath}")
+    private String imageFilePath;
 
     @PostConstruct
     public void init() {
@@ -156,7 +159,7 @@ public class MemberServiceImpl implements IMemberService {
 
             Member member = new Member();
             member.setId(userId);
-            member.setFile("http://localhost:" + serverPort + "/image/" + filename);
+            member.setFile(imageFilePath + filename);
             memberMapper.updateByPrimaryKeySelective(member);
             return ResponseUtils.setCodeAndMsg(response, SysRetCodeConstants.SUCCESS);
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import com.mall.user.dto.KaptchaCodeRequest;
 import com.mall.user.dto.KaptchaCodeResponse;
 import com.mall.user.dto.UserRegisterRequest;
 import com.mall.user.dto.UserRegisterResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class RegisterController {
     @Reference(timeout = 3000, retries = 0, check = false)
     private IKaptchaService kaptchaservice;
@@ -43,7 +45,7 @@ public class RegisterController {
         String userPwd = map.get("userPwd");
         String email = map.get("email");
         String captcha = map.get("captcha");
-
+        log.info("username:{}  password:{}  email:{}",userName, userPwd, email);
         //验证码
         KaptchaCodeResponse kaptchaCodeResponse = getKaptchaCodeResponse(request, captcha);
         if (!kaptchaCodeResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {

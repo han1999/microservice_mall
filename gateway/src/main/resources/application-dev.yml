@@ -21,7 +21,8 @@ captchaFlag : false
 #    root: debug
 spring:
   resources:
-    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
+    static-locations: file:./image/
+  #    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
   redisson:
     address: 127.0.0.1:6379
     timeout: 3000
@@ -33,3 +34,6 @@ spring:
       min-idle: 4
 
 
+#logging:
+#  level:
+#    root: debug

@@ -36,6 +36,8 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // TODO: 2022/8/5  打印request信息， 防止gateway日志文件过大 
+        
         // 1. handler 对象，指的是处理该请求的Controller类中对应方法
         // 2. 如果该请求是一个动态资源的请求，该action对应的对象的类型，就是HandlerMethod
         if (!(handler instanceof HandlerMethod)) {

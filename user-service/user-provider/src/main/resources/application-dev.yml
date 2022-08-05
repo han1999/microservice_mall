@@ -1,6 +1,7 @@
 spring:
   resources:
-    static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
+    static-locations: file:./image/
+  #   static-locations: file:C:\Users\hx\IdeaProjects\microservice_mall\image\
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/microservice_mall?useUnicode=true&characterEncoding=utf8&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
@@ -32,7 +33,7 @@ spring:
       min-idle: 4
   mail:
     host: smtp.qq.com
-    port: 25
+    port: 587
     username: 1295806070@qq.com
     password: kefblqqyhhtsgcgj
 mq:
@@ -67,10 +68,18 @@ lock:
     singleton: true
     ## 全局path前缀,常用来区分不同的应用
     namespace: zkLock
-logging:
-  level:
-    root: debug
+#logging:
+#  level:
+#    root: debug
 #  file: my.log
 # tomcat启动不了，不过没关系
-server:
-  port: 8080
+#server:
+#  port: 8080
+
+email:
+  verify:
+    url: http://118.178.135.74/user/verify?uid=
+
+image:
+#  filepath: http://localhost:8080/image/
+  filepath: http://118.178.135.74:8080/image/
